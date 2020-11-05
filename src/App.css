@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.question {
+  padding-left: 5%;
+}
+.quizContainer {
+  margin-top: 80px;
+}
+.questionCard {
+  padding-bottom: 1px;
+}
+.bottomButtons {
+  padding-bottom: 40px;
+}
