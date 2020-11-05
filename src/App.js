@@ -27,8 +27,133 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
 
-  const initialData = [{
-    quizName: "Mining",
+  const initialData = [
+    {
+      quizName: "Eurovision",
+      quizQuestions: [
+      {
+        question: "Which country won the Eurovision song contest in 2014?",
+        answerOptions: [
+        {
+          answer: "Australia",
+          correct: false,
+          selected: false
+        },{
+          answer: "Azerbaijan",
+          correct: false,
+          selected: false
+        },{
+          answer: "Armenia",
+          correct: false,
+          selected: false
+        },{
+          answer: "Austria",
+          correct: true,
+          selected: false
+        }
+      ]},
+        {
+        question: "Which country has the most wins in the Eurovision Song Contest?",
+        answerOptions: [
+        {
+          answer: "France",
+          correct: false,
+          selected: false
+        },{
+          answer: "Ireland",
+          correct: true,
+          selected: false
+        },{
+          answer: "Sweden",
+          correct: false,
+          selected: false
+        },{
+          answer: "The United Kingdom",
+          correct: false,
+          selected: false
+        }]},{
+        question: "What was the name of Ireland's 2011 song performed by Jedward?",
+        answerOptions: [
+        {
+          answer: "Foundation",
+          correct: false,
+          selected: false
+        },{
+          answer: "Mascara",
+          correct: false,
+          selected: false
+        },{
+          answer: "Blush",
+          correct: false,
+          selected: false
+        },{
+          answer: "Lipstick",
+          correct: true,
+          selected: false
+        }
+      ]},{
+        question: "When was the first Eurovision Song Contest held?",
+        answerOptions: [
+        {
+          answer: "1949",
+          correct: false,
+          selected: false
+        },{
+          answer: "1956",
+          correct: true,
+          selected: false
+        },{
+          answer: "1958",
+          correct: false,
+          selected: false
+        },{
+          answer: "1973",
+          correct: false,
+          selected: false
+        }]},{
+          question: "Where will the Eurovision Song Contest be held next?",
+          answerOptions: [
+          {
+            answer: "Rotterdam, The Netherlands",
+            correct: true,
+            selected: false
+          },{
+            answer: "Helsinki, Finland",
+            correct: false,
+            selected: false
+          },{
+            answer: "Tel Aviv, Israel",
+            correct: false,
+            selected: false
+          },{
+            answer: "Riga, Latvia",
+            correct: false,
+            selected: false
+          }
+        ]},{
+          question: "What is the slogan of Eurovision Song Contest 2021?",
+          answerOptions: [
+          {
+            answer: "Building Bridges",
+            correct: false,
+            selected: false
+          },{
+            answer: "Celebrate Diversity",
+            correct: false,
+            selected: false
+          },{
+            answer: "Open Up",
+            correct: true,
+            selected: false
+          },{
+            answer: "All Aboard!",
+            correct: false,
+            selected: false
+          }
+        ]}
+      ]},
+    {
+    quizName: "Mineral",
     quizQuestions: [
       {
       question: "What is sepiolite also called?",
@@ -92,6 +217,26 @@ function App() {
         selected: false
       }
       ]},{
+        question: "What is sepiolite often used to make?",
+        answerOptions: [
+        {
+          answer: "Cat litter",
+          correct: true,
+          selected: false
+        },{
+          answer: "Bricks",
+          correct: false,
+          selected: false
+        },{
+          answer: "Cement ",
+          correct: true,
+          selected: false
+        },{
+          answer: "Houseplant potting mix",
+          correct: false,
+          selected: false
+        }
+        ]},{
       question: "Which state holds the largest bentonite mine in the USA?",
       answerOptions: [
       {
@@ -110,54 +255,29 @@ function App() {
         answer: "Wyoming",
         correct: true,
         selected: false
-      }
+      }]},
+      {
+        question: "What is a good test for identifying halite?",
+        answerOptions: [
+        {
+          answer: "Magnets",
+          correct: false,
+          selected: false
+        },{
+          answer: "Wash it",
+          correct: false,
+          selected: false
+        },{
+          answer: "Lick it",
+          correct: true,
+          selected: false
+        },{
+          answer: "Hit it with a hammer",
+          correct: false,
+          selected: false
+        }
       ]}
-    ]},{
-    quizName: "Eurovision",
-    quizQuestions: [
-    {
-      question: "Which country won the Eurovision song contest in 2014?",
-      answerOptions: [
-      {
-        answer: "Australia",
-        correct: false,
-        selected: false
-      },{
-        answer: "Azerbaijan",
-        correct: false,
-        selected: false
-      },{
-        answer: "Armenia",
-        correct: false,
-        selected: false
-      },{
-        answer: "Austria",
-        correct: true,
-        selected: false
-      }
-    ]},
-      {
-      question: "Which country has the most wins in the Eurovision Song Contest?",
-      answerOptions: [
-      {
-        answer: "France",
-        correct: false,
-        selected: false
-      },{
-        answer: "Ireland",
-        correct: true,
-        selected: false
-      },{
-        answer: "Sweden",
-        correct: false,
-        selected: false
-      },{
-        answer: "The United Kingdom",
-        correct: false,
-        selected: false
-      }
     ]}
-  ]}
 ];
 
   const classes = useStyles();
@@ -202,8 +322,8 @@ function App() {
       <ButtonAppBar/>
         <Container className="quizContainer">
         <div className={classes.root}>
-          <Button variant="outlined" onClick={() => selectQuiz(0)}>Mining quiz</Button> 
-          <Button variant="outlined" onClick={() => selectQuiz(1)}>Eurovision quiz</Button>
+        <Button variant="outlined" onClick={() => selectQuiz(0)}>Eurovision quiz</Button>
+          <Button variant="outlined" onClick={() => selectQuiz(1)}>Mineral quiz</Button> 
         </div>
             {data[quiz].quizQuestions.map((value, parentIndex) => {
               return(
