@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 function App() {
-
   const initialData = [
     {
       quizName: "Eurovision",
@@ -229,7 +228,7 @@ function App() {
           selected: false
         },{
           answer: "Cement ",
-          correct: true,
+          correct: false,
           selected: false
         },{
           answer: "Houseplant potting mix",
@@ -281,7 +280,7 @@ function App() {
 ];
 
   const classes = useStyles();
-  const [data, setData] = useState(initialData)
+  const [data, setData] = useState([])
   const [dataAlustettu, setDataAlustettu] = useState(false)
   const [quiz, setQuiz] = useState(0);
   const [answersVisible, setAnswersVisible] = useState(false)
@@ -325,10 +324,10 @@ function App() {
         <Button variant="outlined" onClick={() => selectQuiz(0)}>Eurovision quiz</Button>
           <Button variant="outlined" onClick={() => selectQuiz(1)}>Mineral quiz</Button> 
         </div>
-            {data[quiz].quizQuestions.map((value, parentIndex) => {
+            {dataAlustettu ? data[quiz].quizQuestions.map((value, parentIndex) => {
               return(
                 <div className="questionCard">
-                <Card elevation={1}>
+                <Paper elevation={1}>
                 <List className={classes.root}>
                 <p className="question">{value.question}</p>
                 {value.answerOptions.map((value, index) => {
@@ -357,10 +356,10 @@ function App() {
                   )
                 })}
                 </List>
-                </Card>
+                </Paper>
                 </div>
               );
-            })}<br/>
+            }) : "" }<br/>
             <div className="bottomButtons">
               <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide answers" : "Show answers"}</Button> <br />
             </div>
