@@ -1,4 +1,3 @@
-
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import ButtonAppBar from './ButtonAppBar';
@@ -6,12 +5,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-
-import {Container, Card, Paper, Button, Avatar, ListItemAvatar} from '@material-ui/core';
+import quizzesImported from './Quizzes'
+import uuid from 'react-uuid'
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddIcon from '@material-ui/icons/Add';
+import {Container, Paper, Button, Switch, FormControlLabel, TextField} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,261 +25,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function App() {
-  const initialData = [
-    {
-      quizName: "Eurovision",
-      quizQuestions: [
-      {
-        question: "Which country won the Eurovision song contest in 2014?",
-        answerOptions: [
-        {
-          answer: "Australia",
-          correct: false,
-          selected: false
-        },{
-          answer: "Azerbaijan",
-          correct: false,
-          selected: false
-        },{
-          answer: "Armenia",
-          correct: false,
-          selected: false
-        },{
-          answer: "Austria",
-          correct: true,
-          selected: false
-        }
-      ]},
-        {
-        question: "Which country has the most wins in the Eurovision Song Contest?",
-        answerOptions: [
-        {
-          answer: "France",
-          correct: false,
-          selected: false
-        },{
-          answer: "Ireland",
-          correct: true,
-          selected: false
-        },{
-          answer: "Sweden",
-          correct: false,
-          selected: false
-        },{
-          answer: "The United Kingdom",
-          correct: false,
-          selected: false
-        }]},{
-        question: "What was the name of Ireland's 2011 song performed by Jedward?",
-        answerOptions: [
-        {
-          answer: "Foundation",
-          correct: false,
-          selected: false
-        },{
-          answer: "Mascara",
-          correct: false,
-          selected: false
-        },{
-          answer: "Blush",
-          correct: false,
-          selected: false
-        },{
-          answer: "Lipstick",
-          correct: true,
-          selected: false
-        }
-      ]},{
-        question: "When was the first Eurovision Song Contest held?",
-        answerOptions: [
-        {
-          answer: "1949",
-          correct: false,
-          selected: false
-        },{
-          answer: "1956",
-          correct: true,
-          selected: false
-        },{
-          answer: "1958",
-          correct: false,
-          selected: false
-        },{
-          answer: "1973",
-          correct: false,
-          selected: false
-        }]},{
-          question: "Where will the Eurovision Song Contest be held next?",
-          answerOptions: [
-          {
-            answer: "Rotterdam, The Netherlands",
-            correct: true,
-            selected: false
-          },{
-            answer: "Helsinki, Finland",
-            correct: false,
-            selected: false
-          },{
-            answer: "Tel Aviv, Israel",
-            correct: false,
-            selected: false
-          },{
-            answer: "Riga, Latvia",
-            correct: false,
-            selected: false
-          }
-        ]},{
-          question: "What is the slogan of Eurovision Song Contest 2021?",
-          answerOptions: [
-          {
-            answer: "Building Bridges",
-            correct: false,
-            selected: false
-          },{
-            answer: "Celebrate Diversity",
-            correct: false,
-            selected: false
-          },{
-            answer: "Open Up",
-            correct: true,
-            selected: false
-          },{
-            answer: "All Aboard!",
-            correct: false,
-            selected: false
-          }
-        ]}
-      ]},
-    {
-    quizName: "Mineral",
-    quizQuestions: [
-      {
-      question: "What is sepiolite also called?",
-      answerOptions: [
-      {
-        answer: "Montmonite",
-        correct: false,
-        selected: false
-      },{
-        answer: "Calcite",
-        correct: false,
-        selected: false
-      },{
-        answer: "Meerschaum",
-        correct: true,
-        selected: false
-      },{
-        answer: "Silica gel",
-        correct: false,
-        selected: false
-      }
-      ]},
-      {
-      question: "How is sepiolite commonly mined?",
-      answerOptions: [
-      {
-        answer: "Surface mining",
-        correct: true,
-        selected: false
-      },{
-        answer: "Shaft mining",
-        correct: false,
-        selected: false
-      },{
-        answer: "In situ mining",
-        correct: false,
-        selected: false
-      },{
-        answer: "Fracking",
-        correct: false,
-        selected: false
-      }
-      ]},{
-      question: "Which country is the largest sepiolite producer in the world?",
-      answerOptions: [
-      {
-        answer: "USA",
-        correct: false,
-        selected: false
-      },{
-        answer: "Tanzania",
-        correct: false,
-        selected: false
-      },{
-        answer: "Spain ",
-        correct: true,
-        selected: false
-      },{
-        answer: "Turkey",
-        correct: false,
-        selected: false
-      }
-      ]},{
-        question: "What is sepiolite often used to make?",
-        answerOptions: [
-        {
-          answer: "Cat litter",
-          correct: true,
-          selected: false
-        },{
-          answer: "Bricks",
-          correct: false,
-          selected: false
-        },{
-          answer: "Cement ",
-          correct: false,
-          selected: false
-        },{
-          answer: "Houseplant potting mix",
-          correct: false,
-          selected: false
-        }
-        ]},{
-      question: "Which state holds the largest bentonite mine in the USA?",
-      answerOptions: [
-      {
-        answer: "Kentucky",
-        correct: false,
-        selected: false
-      },{
-        answer: "Ohio",
-        correct: false,
-        selected: false
-      },{
-        answer: "Wisconsin ",
-        correct: false,
-        selected: false
-      },{
-        answer: "Wyoming",
-        correct: true,
-        selected: false
-      }]},
-      {
-        question: "What is a good test for identifying halite?",
-        answerOptions: [
-        {
-          answer: "Magnets",
-          correct: false,
-          selected: false
-        },{
-          answer: "Wash it",
-          correct: false,
-          selected: false
-        },{
-          answer: "Lick it",
-          correct: true,
-          selected: false
-        },{
-          answer: "Hit it with a hammer",
-          correct: false,
-          selected: false
-        }
-      ]}
-    ]}
-];
+  const initialData = [...quizzesImported].map((quizObject) => {
+    console.log(quizObject)
+    quizObject.uuid = uuid();
+    quizObject.quizQuestions.map((questionObject) => {
+      console.log(questionObject)
+      questionObject.uuid = uuid();
 
+      return questionObject
+    })
+    return quizObject
+  });
+  console.log("INITIAL DATA BELOW")
+  console.log(initialData)
   const classes = useStyles();
   const [data, setData] = useState([])
   const [dataAlustettu, setDataAlustettu] = useState(false)
@@ -316,31 +76,99 @@ function App() {
     setAnswersVisible(!answersVisible);
   }
 
+  // --------------------------------------
+  const addNewQuestion= (quizIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    let newQuestion= {question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }
+    deepCopy[quizIndex].quizQuestions.push(newQuestion) 
+    setData(deepCopy)
+  }
+
+  const addNewAnswer= (quizIndex, questionIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    let newAnswer= {answer: "", correct: false, selected: false, uuid: uuid()}
+    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.push(newAnswer) 
+    setData(deepCopy)
+  }
+
+  const questionChanged = (event, quizIndex, questionIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    deepCopy[quizIndex].quizQuestions[questionIndex].question = event.target.value;
+    setData(deepCopy)
+  }
+
+  const answerChanged = (event, quizIndex, questionIndex, answerIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].answer = event.target.value;
+    setData(deepCopy)
+  }
+
+
+  const deleteQuestion = (quizIndex, questionIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    deepCopy[quizIndex].quizQuestions.splice(questionIndex,1)
+    setData(deepCopy)
+  }
+
+  const deleteAnswer = (quizIndex, questionIndex, answerIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.splice(answerIndex,1)
+    setData(deepCopy)
+  }
+
+  // --------------------------------------
+
+  const [status, setStatus] = React.useState({
+    teacherMode: true,
+  });
+
+  const handleChange = (event) => {
+    setStatus({ ...status, [event.target.name]: event.target.checked });
+  };
+
   return (
     <div>
       <ButtonAppBar/>
-        <Container className="quizContainer">
+      <Container className="quizContainer">
         <div className={classes.root}>
-        <Button variant="outlined" onClick={() => selectQuiz(0)}>Eurovision quiz</Button>
-          <Button variant="outlined" onClick={() => selectQuiz(1)}>Mineral quiz</Button> 
+        <FormControlLabel
+        control={
+          <Switch
+          checked={status.teacherMode}
+          onChange={handleChange}
+          name="teacherMode"
+          inputProps={{ 'aria-label': 'secondary checkbox' }}
+        />
+        }
+        label="Teacher mode"/><br/>
+        {data.map((val, index) => {
+          return (
+            <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
+          )
+        })}
         </div>
             {dataAlustettu ? data[quiz].quizQuestions.map((value, parentIndex) => {
               return(
                 <div className="questionCard">
                 <Paper elevation={1}>
                 <List className={classes.root}>
-                <p className="question">{value.question}</p>
+                {status.teacherMode ?  
+                  <ListItem key={value.uuid} role={undefined} dense >
+                  <TextField fullWidth onChange={(event) => questionChanged(event, quiz, parentIndex)} size="small" label={"Question " + (parentIndex+1)} variant="outlined" value={value.question}/> 
+                  <Button className="deleteButton" onClick={() => deleteQuestion(quiz, parentIndex)}><DeleteIcon/></Button>
+                 </ListItem>
+                : <div className="question">{value.question}</div>}
                 {value.answerOptions.map((value, index) => {
                   return(
-                  <ListItem key={index} role={undefined} dense >
-                   { answersVisible ? <ListItemIcon>
+                  <ListItem key={value.uuid} role={undefined} dense >
+                   { answersVisible || status.teacherMode ? <ListItemIcon>
                       <Checkbox
                         onChange={(event) => handleToggle(event, index, parentIndex)}
                         checked={value.correct}
                         edge="start"
                         tabIndex={-1}
                         hidden={answersVisible}
-                        disabled
+                        disabled={!status.teacherMode}
                       />
                     </ListItemIcon> : null }
                     <ListItemIcon>
@@ -351,19 +179,27 @@ function App() {
                         tabIndex={-1}
                       />
                     </ListItemIcon>
-                    <ListItemText id={index} primary={value.answer} />
+                    {status.teacherMode ?  
+                      <div>
+                        <TextField onChange={(event) => answerChanged(event, quiz, parentIndex, index)} size="small" label={"Answer " + (index+1)} variant="outlined" value={value.answer}/>
+                        <Button className="deleteButton" onClick={() => deleteAnswer(quiz, parentIndex, index)}><DeleteIcon/></Button> 
+                      </div>
+                      :  <ListItemText id={index} primary={value.answer} />
+                    }
                   </ListItem>
                   )
                 })}
+                {status.teacherMode ? <div className="addButton"><Button onClick={() => addNewAnswer(quiz, parentIndex)}><AddCircleIcon/></Button></div> : ""}
                 </List>
                 </Paper>
                 </div>
               );
-            }) : "" }<br/>
+            }): "" }
             <div className="bottomButtons">
-              <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide answers" : "Show answers"}</Button> <br />
-            </div>
-        </Container>
+            {status.teacherMode ? <Button variant="contained" onClick={() =>addNewQuestion(quiz)}><AddIcon/>   Add new question</Button> : 
+            <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide correct answers" : "Show correct answers"}</Button> 
+            }</div>
+      </Container>
     </div>
   );
 }

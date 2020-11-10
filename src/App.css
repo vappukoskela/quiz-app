@@ -48,4 +48,18 @@
 }
 .bottomButtons {
   padding-bottom: 40px;
+  padding-top: 20px;
+  width:100%;
+  display: flex;
+  justify-content: center;
 }
+
+.deleteButton {
+  padding-left: 35px;
+
+}
+
+.addButton {
+  width:100%;
+  display: flex;
+  justify-content: center;}
