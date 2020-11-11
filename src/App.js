@@ -12,6 +12,7 @@ import uuid from 'react-uuid'
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
+import CheckIcon from '@material-ui/icons/Check';
 import {Container, Paper, Button, Switch, FormControlLabel, TextField} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,18 +28,15 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const initialData = [...quizzesImported].map((quizObject) => {
-    console.log(quizObject)
     quizObject.uuid = uuid();
     quizObject.quizQuestions.map((questionObject) => {
       console.log(questionObject)
       questionObject.uuid = uuid();
-
       return questionObject
     })
     return quizObject
   });
-  console.log("INITIAL DATA BELOW")
-  console.log(initialData)
+
   const classes = useStyles();
   const [data, setData] = useState([])
   const [dataAlustettu, setDataAlustettu] = useState(false)
@@ -83,7 +81,14 @@ function App() {
   }
 
   // --------------------------------------
-  
+
+  const addQuiz= () => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    let newQuiz= {quizName: "New Quiz", uuid:uuid(), quizQuestions: [{question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }]}
+    deepCopy.push(newQuiz) 
+    setData(deepCopy)
+  }
+
   const addNewQuestion= (quizIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
     let newQuestion= {question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }
@@ -152,6 +157,7 @@ function App() {
             <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
           )
         })}
+        {status.teacherMode ? <Button onClick={() => addQuiz()}><AddCircleIcon/></Button> : ""}
         </div>
             {dataAlustettu ? data[quiz].quizQuestions.map((value, parentIndex) => {
               return(
@@ -190,7 +196,7 @@ function App() {
                         <TextField onChange={(event) => answerChanged(event, quiz, parentIndex, index)} size="small" label={"Answer " + (index+1)} variant="outlined" value={value.answer}/>
                         <Button className="deleteButton" onClick={() => deleteAnswer(quiz, parentIndex, index)}><DeleteIcon/></Button> 
                       </div>
-                      :  <ListItemText id={index} primary={value.answer} />
+                      : <div><ListItemText id={index} primary={value.answer} /></div>
                     }
                   </ListItem>
                   )
