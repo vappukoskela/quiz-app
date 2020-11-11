@@ -67,6 +67,12 @@ function App() {
     deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].selected = !deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].selected;
     setData(deepCopy)
   };
+
+  const handleCorrectToggle = (event, index, parentIndex) => {
+    let deepCopy = JSON.parse(JSON.stringify(data))
+    deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].correct = !deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].correct;
+    setData(deepCopy)
+  };
   
   const selectQuiz = (quizNo) => {
     setQuiz(quizNo);
@@ -77,6 +83,7 @@ function App() {
   }
 
   // --------------------------------------
+  
   const addNewQuestion= (quizIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
     let newQuestion= {question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }
@@ -102,7 +109,6 @@ function App() {
     deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].answer = event.target.value;
     setData(deepCopy)
   }
-
 
   const deleteQuestion = (quizIndex, questionIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
@@ -163,7 +169,7 @@ function App() {
                   <ListItem key={value.uuid} role={undefined} dense >
                    { answersVisible || status.teacherMode ? <ListItemIcon>
                       <Checkbox
-                        onChange={(event) => handleToggle(event, index, parentIndex)}
+                        onChange={(event) => handleCorrectToggle(event, index, parentIndex)}
                         checked={value.correct}
                         edge="start"
                         tabIndex={-1}
