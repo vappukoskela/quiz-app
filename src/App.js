@@ -124,7 +124,7 @@ function App() {
 
   const addQuiz = () => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    let newQuiz = { quizName: "New Quiz", uuid: uuid(), quizQuestions: [{ question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid() }], uuid: uuid() }] }
+    let newQuiz = { quizName: "New Quiz", quizQuestions: [{ question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid()}], uuid: uuid()}], uuid: uuid() }
     deepCopy.push(newQuiz)
     setData(deepCopy)
   }
@@ -168,18 +168,6 @@ function App() {
   }
 
   // --------------------------------------
-
-
-  // const quizButtons = (data) => {
-  //   console.log(data)
-  //   if (data) {
-  //     data.map((val, index) => {
-  //       return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
-  //     })
-  //   }
-  // }
-
-
 
   const [status, setStatus] = React.useState({
     teacherMode: true,
