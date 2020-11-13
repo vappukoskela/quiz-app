@@ -13,7 +13,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/Check';
-import {Container, Paper, Button, Switch, FormControlLabel, TextField} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
+
+
+import { Container, Paper, Button, Switch, FormControlLabel, TextField } from '@material-ui/core';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,16 +31,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const GreenCheckbox = withStyles({
+  root: {
+    color: green[400],
+    '&$checked': {
+      color: green[600],
+    },
+  },
+  checked: {},
+})((props) => <Checkbox color="default" {...props} />);
+
+
 function App() {
-  const initialData = [...quizzesImported].map((quizObject) => {
-    quizObject.uuid = uuid();
-    quizObject.quizQuestions.map((questionObject) => {
-      console.log(questionObject)
-      questionObject.uuid = uuid();
-      return questionObject
-    })
-    return quizObject
-  });
+
 
   const classes = useStyles();
   const [data, setData] = useState([])
@@ -43,20 +51,52 @@ function App() {
   const [quiz, setQuiz] = useState(0);
   const [answersVisible, setAnswersVisible] = useState(false)
 
+
   useEffect(() => {
-    let jemma = window.localStorage;
-    let tempData = JSON.parse(jemma.getItem("data"))
-    if (tempData == null) {
-      jemma.setItem("data", JSON.stringify(initialData))
-      tempData = initialData
-    } 
-    setData(tempData);
-    setDataAlustettu(true)
+
+    const createData = async () => {
+
+      try {
+        const initialData = quizzesImported
+        let result = await axios.post("http://localhost:3005/quizzes", initialData)
+        setData(initialData)
+        setDataAlustettu(true)
+
+      } catch (exception) {
+
+        alert("Tietokannan alustaminen epäonnistui" + exception)
+      }
+    }
+
+    const fetchData = async () => {
+      try {
+        let result = await axios.get("http://localhost:3005/quizzes")
+        if (result.data.length > 0) {
+          setData(result.data);
+          setDataAlustettu(true)
+        } else {
+          throw ("Nyt pitää data kyllä alustaa!")
+        }
+      }
+      catch (exception) {
+        createData();
+        console.log(exception)
+      }
+    }
+    fetchData();
   }, [])
 
   useEffect(() => {
+    const updateData = async () => {
+      try {
+        let result = await axios.put("http://localhost:3005/quizzes", data)
+      } catch (exception) {
+        console.log(exception)
+      }
+    }
+
     if (dataAlustettu) {
-      window.localStorage.setItem("data", JSON.stringify(data))
+      updateData();
     }
   }, [data])
 
@@ -71,7 +111,7 @@ function App() {
     deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].correct = !deepCopy[quiz].quizQuestions[parentIndex].answerOptions[index].correct;
     setData(deepCopy)
   };
-  
+
   const selectQuiz = (quizNo) => {
     setQuiz(quizNo);
   }
@@ -82,24 +122,24 @@ function App() {
 
   // --------------------------------------
 
-  const addQuiz= () => {
+  const addQuiz = () => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    let newQuiz= {quizName: "New Quiz", uuid:uuid(), quizQuestions: [{question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }]}
-    deepCopy.push(newQuiz) 
+    let newQuiz = { quizName: "New Quiz", uuid: uuid(), quizQuestions: [{ question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid() }], uuid: uuid() }] }
+    deepCopy.push(newQuiz)
     setData(deepCopy)
   }
 
-  const addNewQuestion= (quizIndex) => {
+  const addNewQuestion = (quizIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    let newQuestion= {question: "", answerOptions: [ {answer: "", correct: false, selected: false,uuid: uuid()}], uuid: uuid() }
-    deepCopy[quizIndex].quizQuestions.push(newQuestion) 
+    let newQuestion = { question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid() }], uuid: uuid() }
+    deepCopy[quizIndex].quizQuestions.push(newQuestion)
     setData(deepCopy)
   }
 
-  const addNewAnswer= (quizIndex, questionIndex) => {
+  const addNewAnswer = (quizIndex, questionIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    let newAnswer= {answer: "", correct: false, selected: false, uuid: uuid()}
-    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.push(newAnswer) 
+    let newAnswer = { answer: "", correct: false, selected: false, uuid: uuid() }
+    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.push(newAnswer)
     setData(deepCopy)
   }
 
@@ -117,17 +157,29 @@ function App() {
 
   const deleteQuestion = (quizIndex, questionIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    deepCopy[quizIndex].quizQuestions.splice(questionIndex,1)
+    deepCopy[quizIndex].quizQuestions.splice(questionIndex, 1)
     setData(deepCopy)
   }
 
   const deleteAnswer = (quizIndex, questionIndex, answerIndex) => {
     let deepCopy = JSON.parse(JSON.stringify(data))
-    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.splice(answerIndex,1)
+    deepCopy[quizIndex].quizQuestions[questionIndex].answerOptions.splice(answerIndex, 1)
     setData(deepCopy)
   }
 
   // --------------------------------------
+
+
+  // const quizButtons = (data) => {
+  //   console.log(data)
+  //   if (data) {
+  //     data.map((val, index) => {
+  //       return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
+  //     })
+  //   }
+  // }
+
+
 
   const [status, setStatus] = React.useState({
     teacherMode: true,
@@ -139,78 +191,81 @@ function App() {
 
   return (
     <div>
-      <ButtonAppBar/>
+      {console.log(data)}
+      <ButtonAppBar />
       <Container className="quizContainer">
         <div className={classes.root}>
-        <FormControlLabel
-        control={
-          <Switch
-          checked={status.teacherMode}
-          onChange={handleChange}
-          name="teacherMode"
-          inputProps={{ 'aria-label': 'secondary checkbox' }}
-        />
-        }
-        label="Teacher mode"/><br/>
-        {data.map((val, index) => {
-          return (
-            <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
-          )
-        })}
-        {status.teacherMode ? <Button onClick={() => addQuiz()}><AddCircleIcon/></Button> : ""}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={status.teacherMode}
+                onChange={handleChange}
+                name="teacherMode"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+              />
+            }
+            label="Teacher mode" /><br />
+          {dataAlustettu ? data.map((val, index) => {
+            return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
+          })
+            : null}
+          {status.teacherMode ? <Button onClick={() => addQuiz()}><AddCircleIcon /></Button> : ""}
         </div>
-            {dataAlustettu ? data[quiz].quizQuestions.map((value, parentIndex) => {
-              return(
-                <div className="questionCard">
-                <Paper elevation={1}>
+
+        {dataAlustettu ? data[quiz].quizQuestions.map((value, parentIndex) => {
+          console.log(value)
+          return (
+            <div className="questionCard">
+              <Paper elevation={1}>
                 <List className={classes.root}>
-                {status.teacherMode ?  
-                  <ListItem key={value.uuid} role={undefined} dense >
-                  <TextField fullWidth onChange={(event) => questionChanged(event, quiz, parentIndex)} size="small" label={"Question " + (parentIndex+1)} variant="outlined" value={value.question}/> 
-                  <Button className="deleteButton" onClick={() => deleteQuestion(quiz, parentIndex)}><DeleteIcon/></Button>
-                 </ListItem>
-                : <div className="question">{value.question}</div>}
-                {value.answerOptions.map((value, index) => {
-                  return(
-                  <ListItem key={value.uuid} role={undefined} dense >
-                   { answersVisible || status.teacherMode ? <ListItemIcon>
-                      <Checkbox
-                        onChange={(event) => handleCorrectToggle(event, index, parentIndex)}
-                        checked={value.correct}
-                        edge="start"
-                        tabIndex={-1}
-                        hidden={answersVisible}
-                        disabled={!status.teacherMode}
-                      />
-                    </ListItemIcon> : null }
-                    <ListItemIcon>
-                      <Checkbox
-                        onChange={(event) => handleToggle(event, index, parentIndex)}
-                        checked={value.selected}
-                        edge="start"
-                        tabIndex={-1}
-                      />
-                    </ListItemIcon>
-                    {status.teacherMode ?  
-                      <div>
-                        <TextField onChange={(event) => answerChanged(event, quiz, parentIndex, index)} size="small" label={"Answer " + (index+1)} variant="outlined" value={value.answer}/>
-                        <Button className="deleteButton" onClick={() => deleteAnswer(quiz, parentIndex, index)}><DeleteIcon/></Button> 
-                      </div>
-                      : <div><ListItemText id={index} primary={value.answer} /></div>
-                    }
-                  </ListItem>
-                  )
-                })}
-                {status.teacherMode ? <div className="addButton"><Button onClick={() => addNewAnswer(quiz, parentIndex)}><AddCircleIcon/></Button></div> : ""}
+                  {status.teacherMode ?
+                    <ListItem key={value.uuid} role={undefined} dense >
+                      <TextField fullWidth onChange={(event) => questionChanged(event, quiz, parentIndex)} size="small" label={"Question " + (parentIndex + 1)} variant="outlined" value={value.question} />
+                      <Button className="deleteButton" onClick={() => deleteQuestion(quiz, parentIndex)}><DeleteIcon /></Button>
+                    </ListItem>
+                    : <div className="question">{value.question}</div>}
+                  {value.answerOptions.map((value, index) => {
+                    return (
+                      <ListItem key={value.uuid} role={undefined} dense >
+                        { answersVisible || status.teacherMode ? <ListItemIcon>
+                          <GreenCheckbox
+                            onChange={(event) => handleCorrectToggle(event, index, parentIndex)}
+                            checked={value.correct}
+                            edge="start"
+                            tabIndex={-1}
+                            hidden={answersVisible}
+                            disabled={!status.teacherMode}
+                          />
+                        </ListItemIcon> : null}
+                        <ListItemIcon>
+                          <Checkbox
+                            onChange={(event) => handleToggle(event, index, parentIndex)}
+                            checked={value.selected}
+                            edge="start"
+                            tabIndex={-1}
+                          />
+                        </ListItemIcon>
+                        {status.teacherMode ?
+                          <div>
+                            <TextField onChange={(event) => answerChanged(event, quiz, parentIndex, index)} size="small" label={"Answer " + (index + 1)} variant="outlined" value={value.answer} />
+                            <Button className="deleteButton" onClick={() => deleteAnswer(quiz, parentIndex, index)}><DeleteIcon /></Button>
+                          </div>
+                          : <div><ListItemText id={index} primary={value.answer} /></div>
+                        }
+                      </ListItem>
+                    )
+                  })}
+                  {status.teacherMode ? <div className="addButton"><Button onClick={() => addNewAnswer(quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
                 </List>
-                </Paper>
-                </div>
-              );
-            }): "" }
-            <div className="bottomButtons">
-            {status.teacherMode ? <Button variant="contained" onClick={() =>addNewQuestion(quiz)}><AddIcon/>   Add new question</Button> : 
-            <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide correct answers" : "Show correct answers"}</Button> 
-            }</div>
+              </Paper>
+            </div>
+          );
+        })
+          : null}
+        <div className="bottomButtons">
+          {status.teacherMode ? <Button variant="contained" onClick={() => addNewQuestion(quiz)}><AddIcon />   Add new question</Button> :
+            <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide correct answers" : "Show correct answers"}</Button>
+          }</div>
       </Container>
     </div>
   );
