@@ -1,0 +1,278 @@
+{
+    "quizzes": [
+        {
+            "quizName": "Eurovision",
+            "quizQuestions": [
+                {
+                    "question": "Which country won the Eurovision song contest in 2014?",
+                    "topicArea": "Chapter 1",
+                    "answerOptions": [
+                        {
+                            "answer": "Australia",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Azerbaijan",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Armenia",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Austria",
+                            "correct": true
+                        }
+                    ]
+                },
+                {
+                    "question": "Which country has most wins in the Eurovision Song Contest?",
+                    "topicArea": "Chapter 1",
+                    "answerOptions": [
+                        {
+                            "answer": "France",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Ireland",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Sweden",
+                            "correct": false
+                        },
+                        {
+                            "answer": "The United Kingdom",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "What was the name of Ireland's 2011 song performed by Jedward?",
+                    "topicArea": "Chapter 2",
+                    "answerOptions": [
+                        {
+                            "answer": "Foundation",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Mascara",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Blush",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Lipstick",
+                            "correct": true
+                        }
+                    ]
+                },
+                {
+                    "question": "When was the first Eurovision Song Contest held?",
+                    "topicArea": "Chapter 2",
+                    "answerOptions": [
+                        {
+                            "answer": "1949",
+                            "correct": false
+                        },
+                        {
+                            "answer": "1956",
+                            "correct": true
+                        },
+                        {
+                            "answer": "1958",
+                            "correct": false
+                        },
+                        {
+                            "answer": "1973",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "Where will the Eurovision Song Contest be held next?",
+                    "topicArea": "Chapter 2",
+                    "answerOptions": [
+                        {
+                            "answer": "Rotterdam, The Netherlands",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Helsinki, Finland",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Tel Aviv, Israel",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Riga, Latvia",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "What is the slogan of Eurovision Song Contest 2021?",
+                    "topicArea": "Chapter 1",
+                    "answerOptions": [
+                        {
+                            "answer": "Building Bridges",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Celebrate Diversity",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Open Up",
+                            "correct": true
+                        },
+                        {
+                            "answer": "All Aboard!",
+                            "correct": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "quizName": "Minerals",
+            "quizQuestions": [
+                {
+                    "question": "What is sepiolite also called?",
+                    "topicArea": "Chapter 1",
+                    "answerOptions": [
+                        {
+                            "answer": "Montmonite",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Calcite",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Meerschaum",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Silica gel",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "How is sepiolite commonly mined?",
+                    "topicArea": "Chapter 3",
+                    "answerOptions": [
+                        {
+                            "answer": "Surface mining",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Shaft mining",
+                            "correct": false
+                        },
+                        {
+                            "answer": "In situ mining",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Fracking",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "Which country is the largest sepiolite producer in the world?",
+                    "topicArea": "Chapter 3",
+                    "answerOptions": [
+                        {
+                            "answer": "USA",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Tanzania",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Spain ",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Turkey",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "What is sepiolite often used to make?",
+                    "topicArea": "Chapter 1",
+                    "answerOptions": [
+                        {
+                            "answer": "Cat litter",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Bricks",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Cement ",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Houseplant potting mix",
+                            "correct": false
+                        }
+                    ]
+                },
+                {
+                    "question": "Which state holds the largest bentonite mine in the USA?",
+                    "topicArea": "Chapter 2",
+                    "answerOptions": [
+                        {
+                            "answer": "Kentucky",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Ohio",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Wisconsin ",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Wyoming",
+                            "correct": true
+                        }
+                    ]
+                },
+                {
+                    "question": "What is a good test for identifying halite?",
+                    "topicArea": "Chapter 3",
+                    "answerOptions": [
+                        {
+                            "answer": "Magnets",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Wash it",
+                            "correct": false
+                        },
+                        {
+                            "answer": "Lick it",
+                            "correct": true
+                        },
+                        {
+                            "answer": "Hit it with a hammer",
+                            "correct": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

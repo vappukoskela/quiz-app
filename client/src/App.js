@@ -8,26 +8,29 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import quizzesImported from './Quizzes'
+
+import datanouuid from './datanouuid.json'
+
 import uuid from 'react-uuid'
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import ChartsDemo from './ChartsDemo.js'
+// import ChartsDemo from './ChartsDemo.js'
 import { Container, Paper, Button, Switch, FormControlLabel, TextField } from '@material-ui/core';
 import axios from 'axios';
-import {
-  Chart,
-  BarSeries,
-  Title,
-  ArgumentAxis,
-  ValueAxis,
-  PieSeries,
+// import {
+//   Chart,
+//   BarSeries,
+//   Title,
+//   ArgumentAxis,
+//   ValueAxis,
+//   PieSeries,
 
-} from '@devexpress/dx-react-chart-material-ui';
+// } from '@devexpress/dx-react-chart-material-ui';
 
-import { Animation } from '@devexpress/dx-react-chart';
+// import { Animation } from '@devexpress/dx-react-chart';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -139,10 +142,23 @@ function App() {
   useEffect(() => {
     const createData = async () => {
       try {
-        const initialData = quizzesImported
-        let result = await axios.post("http://localhost:3005/quizzes", initialData)
-        dispatch({ type: "INIT_DATA", data: initialData })
-        setDataAlustettu(true)
+
+        const initialData = datanouuid;
+
+        // for (var i = 0; i < initialData.length; i++){
+        //   console.log(i)
+        //   axios.post("http://localhost:5000/quiz", {
+        //     "quizname": initialData[i].quizName,
+        //     "user_id": 2
+        //   }).then (response => {console.log(response.data); return response.data});
+        // }
+
+     
+
+        // const initialData = quizzesImported
+        // let result = await axios.post("http://localhost:4000/quizzes", initialData)
+        // dispatch({ type: "INIT_DATA", data: initialData })
+        // setDataAlustettu(true)
       } catch (exception) {
         alert("Tietokannan alustaminen epäonnistui" + exception)
       }
@@ -150,7 +166,7 @@ function App() {
 
     const fetchData = async () => {
       try {
-        let result = await axios.get("http://localhost:3005/quizzes")
+        let result = await axios.get("http://localhost:4000/quizzes")
         if (result.data.length > 0) {
           dispatch({ type: "INIT_DATA", data: result.data })
           setDataAlustettu(true)
@@ -170,7 +186,7 @@ function App() {
   useEffect(() => {
     const updateData = async () => {
       try {
-        let result = await axios.put("http://localhost:3005/quizzes", state)
+        let result = await axios.put("http://localhost:4000/quizzes", state)
       } catch (exception) {
         console.log("Datan päivitys ei onnistunut")
       }
@@ -216,7 +232,7 @@ function App() {
       <Container className="quizContainer">
 
 
-        <ChartsDemo/>
+        {/* <ChartsDemo/> */}
 
         
         <div className={classes.root}>
