@@ -56,10 +56,15 @@
 
 .deleteButton {
   padding-left: 35px;
-
 }
-
 .addButton {
   width:100%;
   display: flex;
-  justify-content: center;}
+  justify-content: center;
+}
+
+.container {
+  width:100%;
+  display: flex;
+  justify-content: center;
+}

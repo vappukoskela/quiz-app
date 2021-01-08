@@ -1,36 +1,17 @@
 import './App.css';
 import React, { useEffect, useState, useReducer } from 'react';
-import ButtonAppBar from './ButtonAppBar';
+import ButtonAppBar from './components/ButtonAppBar';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import quizzesImported from './Quizzes'
-
-import datanouuid from './datanouuid.json'
-
-import uuid from 'react-uuid'
-import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { withStyles } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
-// import ChartsDemo from './ChartsDemo.js'
-import { Container, Paper, Button, Switch, FormControlLabel, TextField } from '@material-ui/core';
+import { Container, Paper, Button, Switch, FormControlLabel } from '@material-ui/core';
 import axios from 'axios';
-// import {
-//   Chart,
-//   BarSeries,
-//   Title,
-//   ArgumentAxis,
-//   ValueAxis,
-//   PieSeries,
-
-// } from '@devexpress/dx-react-chart-material-ui';
-
-// import { Animation } from '@devexpress/dx-react-chart';
+import Register from './components/Register'
+import EditQuestion from './components/EditQuestion';
+import EditAnswerOption from './components/EditAnswerOption';
+import AnswerOption from './components/AnswerOption';
+import Login from './components/Login';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,32 +23,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const chartData = {
-  labels: ['Aihealue 1', 'Aihealue 2', 'Aihealue 3'],
-  datasets: [
-    {
-      label: 'My First dataset',
-      backgroundColor: 'rgba(255,99,132,0.2)',
-      borderColor: 'rgba(255,99,132,1)',
-      borderWidth: 1,
-      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-      hoverBorderColor: 'rgba(255,99,132,1)',
-      data: [65, 59, 100]
-    }
-  ]
-};
-
-
-const GreenCheckbox = withStyles({
-  root: {
-    color: green[400],
-    '&$checked': {
-      color: green[600],
-    },
-  },
-  checked: {},
-})((props) => <Checkbox color="default" {...props} />);
 
 // ----------------REDUCER----------------------------------------------------
 
@@ -89,15 +44,15 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizName = action.data.newText;
       return deepCopy;
     case "ADD_ANSWER":
-      let newAnswer = { answer: "", correct: false, selected: false, uuid: uuid() }
+      let newAnswer = { answer: "", correct: false, selected: false, id: action.data.id }
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions.push(newAnswer)
       return deepCopy;
     case "ADD_QUESTION":
-      let newQuestion = { question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid() }], uuid: uuid() }
+      let newQuestion = { question: "", answerOptions: [], id: action.data.id }
       deepCopy[action.data.quizIndex].quizQuestions.push(newQuestion)
       return deepCopy;
     case "ADD_QUIZ":
-      let newQuiz = { quizName: "New Quiz", quizQuestions: [{ question: "", answerOptions: [{ answer: "", correct: false, selected: false, uuid: uuid() }], uuid: uuid() }], uuid: uuid() }
+      let newQuiz = { quizName: "New Quiz", quizQuestions: [{ answerOptions: [] }] }
       deepCopy.push(newQuiz)
       return deepCopy;
     case "DELETE_ANSWER":
@@ -113,12 +68,6 @@ function reducer(state, action) {
     case "SELECT_TOGGLE":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].selected =
         !deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].selected;
-
-      /*
-       if( deepcopy jne....selected && deepcopyjne...correct) {
-        answerCorrecti = true;
-      }
-      */
       return deepCopy;
     case "CORRECT_TOGGLE":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].correct =
@@ -138,74 +87,160 @@ function App() {
   const [answersVisible, setAnswersVisible] = useState(false);
   const [state, dispatch] = useReducer(reducer, []);
 
-
   useEffect(() => {
-    const createData = async () => {
-      try {
-
-        const initialData = datanouuid;
-
-        // for (var i = 0; i < initialData.length; i++){
-        //   console.log(i)
-        //   axios.post("http://localhost:5000/quiz", {
-        //     "quizname": initialData[i].quizName,
-        //     "user_id": 2
-        //   }).then (response => {console.log(response.data); return response.data});
-        // }
-
-     
-
-        // const initialData = quizzesImported
-        // let result = await axios.post("http://localhost:4000/quizzes", initialData)
-        // dispatch({ type: "INIT_DATA", data: initialData })
-        // setDataAlustettu(true)
-      } catch (exception) {
-        alert("Tietokannan alustaminen epäonnistui" + exception)
-      }
-    }
-
     const fetchData = async () => {
       try {
-        let result = await axios.get("http://localhost:4000/quizzes")
+        let result = await axios.get("http://localhost:5000/quiz")
         if (result.data.length > 0) {
+          for (var i = 0; i < result.data.length; i++) {
+            result.data[i].quizQuestions = []
+            let questions = await axios.get("http://localhost:5000/quiz/" + result.data[i].id + "/question/")
+            result.data[i].quizQuestions = questions.data;
+            if (result.data[i].quizQuestions.length > 0) {
+              for (var j = 0; j < result.data[i].quizQuestions.length; j++) {
+                result.data[i].quizQuestions[j].answerOptions = [];
+                let answers = await axios.get("http://localhost:5000/quiz/" + result.data[i].id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
+                result.data[i].quizQuestions[j].answerOptions = answers.data;
+              }
+            }
+          }
+          console.log(result.data)
           dispatch({ type: "INIT_DATA", data: result.data })
           setDataAlustettu(true)
-
         } else {
-          throw ("Nyt pitää data kyllä alustaa!")
+          throw ("No data :(")
         }
       }
       catch (exception) {
-        createData();
         console.log(exception)
       }
     }
     fetchData();
   }, [])
 
-  useEffect(() => {
-    const updateData = async () => {
-      try {
-        let result = await axios.put("http://localhost:4000/quizzes", state)
-      } catch (exception) {
-        console.log("Datan päivitys ei onnistunut")
-      }
-      finally {
+  // TODO: updateUseranswer
 
-      }
+  //// POST ---------------------------------------------------------------------------------------------------
+  const addQuestion = async (event, quizIndex) => {
+    let quizId = state[quizIndex].id;
+    let body = {}
+    try {
+      let result = await axios.post("http://localhost:5000/quiz/" + quizId, body).then(response => {
+        console.log("new id" + response.data.id);
+        dispatch({ type: "ADD_QUESTION", data: { quizIndex: quiz, id: response.data.id } })
+      })
+    } catch (e) {
+      console.log(e)
     }
-    if (dataAlustettu) {
-      updateData();
-    }
-  }, [state])
+  }
 
+  const addAnsweroption = async (event, quizIndex, questionIndex) => {
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    let body = { correct: false }
+    try {
+      let result = await axios.post("http://localhost:5000/quiz/" + quizId + "/question/" + questionId, body).then(response => {
+        console.log("new id" + response.data.id);
+        dispatch({ type: "ADD_ANSWER", data: { quizIndex: quiz, questionIndex: questionIndex, id: response.data.id } })
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+   //// PUT -------------------------------------------------------------------------------------------------------
+   const updateQuestion = async (event, quizIndex, questionIndex) => {
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    let body = {
+      question: event.target.value
+    }
+    try {
+      let result = await axios.put("http://localhost:5000/quiz/" + quizId + "/question/" + questionId, body)
+      dispatch({ type: "QUESTION_CHANGED", data: { newText: body.question, quizIndex: quizIndex, questionIndex: questionIndex } })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const updateAnsweroption = async (event, quizIndex, questionIndex, answerIndex, editMode) => {
+    console.log(event)
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
+    let body = {}
+    switch (editMode) {
+      case "TEXT":
+        body.answer = event.target.value;
+        body.correct = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].correct;
+        break;
+      case "CHECKBOX":
+        body.answer = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].answer;
+        body.correct = !state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].correct;
+        break;
+      default:
+        body.answer = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].answer;
+        body.correct = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].correct;
+        break;
+    }
+    try {
+      let result = await axios.put("http://localhost:5000/quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId, body)
+      switch (editMode) {
+        case "TEXT":
+          dispatch({ type: "ANSWER_CHANGED", data: { newText: body.answer, quizIndex: quizIndex, questionIndex: questionIndex, answerIndex: answerIndex } })
+          break;
+        case "CHECKBOX":
+          dispatch({ type: "CORRECT_TOGGLE", data: { newText: body.answer, quizIndex: quizIndex, questionIndex: questionIndex, answerIndex: answerIndex } })
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  //// DELETE ------------------------------------------------------------------------------------------------
+
+  const deleteQuestion = async (event, quizIndex, questionIndex) => {
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    try {
+      let result = await axios.delete("http://localhost:5000/quiz/" + quizId + "/question/" + questionId)
+      dispatch({ type: "DELETE_QUESTION", data: { newText: '', quizIndex: quiz, questionIndex: questionIndex } })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const deleteQuiz = async (event, quizIndex) => {
+    let quizId = state[quizIndex].id;
+    try {
+      let result = await axios.delete("http://localhost:5000/quiz/" + quizId)
+      dispatch({ type: "DELETE_QUIZ", data: { newText: '', quizIndex: quiz } })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const deleteAnsweroption = async (event, quizIndex, questionIndex, answerIndex) => {
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
+    try {
+      let result = await axios.delete("http://localhost:5000/quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId)
+      dispatch({ type: "DELETE_ANSWER", data: { newText: '', quizIndex: quiz, questionIndex: questionIndex, answerIndex: answerIndex } })
+    } catch (e) {
+      console.log(e)
+    }
+  }  
+
+  //// MISC ---------------------------------------------------------------------------------------------------
   const selectQuiz = (quizNo) => {
     setQuiz(quizNo);
   }
 
   const toggleAnswers = () => {
     setAnswersVisible(!answersVisible);
-
   }
 
   const [status, setStatus] = React.useState({
@@ -225,16 +260,13 @@ function App() {
     }
   }
 
-
+  //// JSX ------------------------------------------------------------------------------------------------------
   return (
     <div>
-      <ButtonAppBar />
+      <ButtonAppBar/>
       <Container className="quizContainer">
-
-
-        {/* <ChartsDemo/> */}
-
-        
+        <Register/>
+        <Login/>
         <div className={classes.root}>
           <FormControlLabel
             control={
@@ -247,60 +279,33 @@ function App() {
             }
             label="Teacher mode" /><br />
           {dataAlustettu ? state.map((val, index) => {
-            return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizName}</Button>
-          })
-            : null}
+            return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
+          }): null}
           {status.teacherMode ? <Button onClick={(event) => dispatch({ type: "ADD_QUIZ", data: {} })}><AddCircleIcon /></Button> : ""}
         </div>
-
         {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
-          buildTopicList(value.topicArea)
-          console.log(topicList)
-
-          return (
+           return (
             <div className="questionCard">
               <Paper elevation={1}>
                 <List className={classes.root}>
                   <h3>{value.topicArea}</h3>
                   {status.teacherMode ?
-                    <ListItem key={value.uuid} role={undefined} dense >
-                      <TextField fullWidth onChange={(event) => dispatch({ type: "QUESTION_CHANGED", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex } })} size="small" label={"Question " + (parentIndex + 1)} variant="outlined" value={value.question} />
-                      <Button className="deleteButton" onClick={(event) => dispatch({ type: "DELETE_QUESTION", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex } })}><DeleteIcon /></Button>
-                    </ListItem>
-                    : <div className="question">{value.question}</div>}
+                    <EditQuestion value={value} quiz={quiz} parentIndex={parentIndex} updateQuestion={updateQuestion} deleteQuestion={deleteQuestion}/> 
+                    : <div className="question">{value.question}</div>
+                  }
                   {value.answerOptions.map((value, index) => {
-
                     return (
-                      <ListItem key={value.uuid} role={undefined} dense >
-                        { answersVisible || status.teacherMode ? <ListItemIcon>
-                          <GreenCheckbox
-                            onChange={(event) => dispatch({ type: "CORRECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
-                            checked={value.correct}
-                            edge="start"
-                            tabIndex={-1}
-                            hidden={answersVisible}
-                            disabled={!status.teacherMode}
-                          />
-                        </ListItemIcon> : null}
-                        <ListItemIcon>
-                          <Checkbox
-                            onChange={(event) => dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
-                            checked={value.selected}
-                            edge="start"
-                            tabIndex={-1}
-                          />
-                        </ListItemIcon>
-                        {status.teacherMode ?
-                          <div>
-                            <TextField onChange={(event) => dispatch({ type: "ANSWER_CHANGED", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })} size="small" label={"Answer " + (index + 1)} variant="outlined" value={value.answer} />
-                            <Button className="deleteButton" onClick={(event) => dispatch({ type: "DELETE_ANSWER", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}><DeleteIcon /></Button>
-                          </div>
-                          : <div><ListItemText id={index} primary={value.answer} /></div>
-                        }
-                      </ListItem>
+                      <div>
+                      {status.teacherMode ? 
+                        <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
+                          updateAnsweroption={updateAnsweroption}
+                          deleteAnsweroption={deleteAnsweroption}
+                        />
+                        : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible}/>}
+                      </div>
                     )
                   })}
-                  {status.teacherMode ? <div className="addButton"><Button onClick={(event) => dispatch({ type: "ADD_ANSWER", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex } })}><AddCircleIcon /></Button></div> : ""}
+                  {status.teacherMode ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
                 </List>
               </Paper>
             </div>
@@ -308,13 +313,12 @@ function App() {
         })
           : null}
         <div className="bottomButtons">
-          {status.teacherMode ? <Button variant="contained" onClick={(event) => dispatch({ type: "ADD_QUESTION", data: { newText: event.target.value, quizIndex: quiz } })}><AddIcon />   Add new question</Button> :
+          {status.teacherMode ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   Add new question</Button> :
             <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide correct answers" : "Show correct answers"}</Button>
-          }</div> 
+          }</div>
       </Container>
-
-    </div>
+  </div>
   );
 }
-
 export default App;
+
