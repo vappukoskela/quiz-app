@@ -2,29 +2,27 @@ import { Checkbox, ListItem, ListItemIcon, ListItemText } from "@material-ui/cor
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 
-
 function AnswerOption(props) {
     const GreenCheckbox = withStyles({
         root: {
-          color: green[400],
-          '&$checked': {
-            color: green[600],
-          },
+            color: green[400],
+            '&$checked': {
+                color: green[600],
+            },
         },
         checked: {},
-      })((props) => <Checkbox color="default" {...props} />);
-      
+    })((props) => <Checkbox color="default" {...props} />);
 
     return (
         <ListItem key={props.value.id} role={undefined} dense >
             <ListItemIcon>
-                <GreenCheckbox
-                    checked={props.value.correct}
-                    edge="start"
-                    tabIndex={-1}
-                    hidden={props.answersVisible}
-                    disabled={true}
-                />
+                {props.answersVisible ?
+                    <GreenCheckbox
+                        checked={props.value.correct}
+                        edge="start"
+                        tabIndex={-1}
+                        disabled={true}
+                    /> : null}
             </ListItemIcon>
             <ListItemIcon>
                 <Checkbox
@@ -35,7 +33,7 @@ function AnswerOption(props) {
                     tabIndex={-1}
                 />
             </ListItemIcon>
-                <div><ListItemText id={props.index} primary={props.value.answer} /></div>
+            <div><ListItemText id={props.index} primary={props.value.answer} /></div>
         </ListItem>
     )
 }

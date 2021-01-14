@@ -3,6 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Button, Checkbox, TextField } from '@material-ui/core';
 import axios from 'axios';
+import strings from '../localization/strings';
 
 const Register = () => {
     const [userData, setUserData] = useState({
@@ -45,7 +46,7 @@ const Register = () => {
                 setErrorMsg("");})
         
         } catch (e) {
-            setErrorMsg("Registration failed")
+            setErrorMsg(strings.regerror)
             console.log("registration error", e)
         }
     }
@@ -54,23 +55,23 @@ const Register = () => {
         <div className="container">
             <List>
                 <ListItem>
-                    <h2>Register</h2>
+                    <h2>{strings.register}</h2>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "firstname")} size="small" label="First name" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "firstname")} size="small" label={strings.firstname} variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "surname")} size="small" label="Surname" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "surname")} size="small" label={strings.surname} variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "email")} size="small" label="Email" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "email")} size="small" label={strings.email} variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "password")} size="small" label="Password" type="password" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "password")} size="small" label={strings.password} type="password" variant="outlined"></TextField>
                 </ListItem>
-                <ListItem><Checkbox checked={isAdmin} onChange={(e) => setIsAdmin(!isAdmin)}/> Admin user?</ListItem>
+                <ListItem><Checkbox checked={isAdmin} onChange={(e) => setIsAdmin(!isAdmin)}/> {strings.adminuser}?</ListItem>
                 <ListItem>
-                    <Button variant="outlined" onClick={(e) => submitRegistration(e)}>REGISTER</Button>
+                    <Button variant="outlined" onClick={(e) => submitRegistration(e)}>{strings.register}</Button>
                 </ListItem>
                 <ListItem className="errorMessage">{errorMsg}</ListItem>
             </List>

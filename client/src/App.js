@@ -5,13 +5,23 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { Container, Paper, Button, Switch, FormControlLabel } from '@material-ui/core';
+import { Container, Paper, Button, FormControlLabel } from '@material-ui/core';
+import { Switch as MaterialSwitch } from '@material-ui/core';
 import axios from 'axios';
 import Register from './components/Register'
 import EditQuestion from './components/EditQuestion';
 import EditAnswerOption from './components/EditAnswerOption';
 import AnswerOption from './components/AnswerOption';
 import Login from './components/Login';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  withRouter
+} from "react-router-dom";
+import {setLanguage} from 'react-localization';
+import strings from './localization/strings';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +42,7 @@ function reducer(state, action) {
     case 'increment':
       return { count: state.count + 1 };
     case "INIT_DATA":
+      console.log(action)
       return action.data; /// <--- this should be state
     case "ANSWER_CHANGED":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].answer = action.data.newText;
@@ -86,6 +97,8 @@ function App() {
   const [quiz, setQuiz] = useState(0);
   const [answersVisible, setAnswersVisible] = useState(false);
   const [state, dispatch] = useReducer(reducer, []);
+  const [loggedIn, setLoggedIn] = useState()
+  const [lan, setLan] = useState('en')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,6 +131,27 @@ function App() {
     fetchData();
   }, [])
 
+  const getWindowLanguage = () => {
+    var language
+    console.log(window.navigator.languages)
+    if (window.navigator.languages) {
+      language = window.navigator.languages[0]
+    } else {
+      language = window.navigator.userLanguage || window.navigator.language
+    }
+    return language;
+  }
+
+  const switchLanguage = (newLan) => {
+    setLan(newLan)
+  }
+
+  useEffect(()=>{
+    strings.setLanguage(lan)
+  }, [lan])
+
+ 
+
   // TODO: updateUseranswer
 
   //// POST ---------------------------------------------------------------------------------------------------
@@ -148,8 +182,8 @@ function App() {
     }
   }
 
-   //// PUT -------------------------------------------------------------------------------------------------------
-   const updateQuestion = async (event, quizIndex, questionIndex) => {
+  //// PUT -------------------------------------------------------------------------------------------------------
+  const updateQuestion = async (event, quizIndex, questionIndex) => {
     let quizId = state[quizIndex].id;
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     let body = {
@@ -232,7 +266,7 @@ function App() {
     } catch (e) {
       console.log(e)
     }
-  }  
+  }
 
   //// MISC ---------------------------------------------------------------------------------------------------
   const selectQuiz = (quizNo) => {
@@ -263,61 +297,67 @@ function App() {
   //// JSX ------------------------------------------------------------------------------------------------------
   return (
     <div>
-      <ButtonAppBar/>
       <Container className="quizContainer">
-        <Register/>
-        <Login/>
-        <div className={classes.root}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={status.teacherMode}
-                onChange={handleChange}
-                name="teacherMode"
-                inputProps={{ 'aria-label': 'secondary checkbox' }}
-              />
-            }
-            label="Teacher mode" /><br />
-          {dataAlustettu ? state.map((val, index) => {
-            return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
-          }): null}
-          {status.teacherMode ? <Button onClick={(event) => dispatch({ type: "ADD_QUIZ", data: {} })}><AddCircleIcon /></Button> : ""}
-        </div>
-        {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
-           return (
-            <div className="questionCard">
-              <Paper elevation={1}>
-                <List className={classes.root}>
-                  <h3>{value.topicArea}</h3>
-                  {status.teacherMode ?
-                    <EditQuestion value={value} quiz={quiz} parentIndex={parentIndex} updateQuestion={updateQuestion} deleteQuestion={deleteQuestion}/> 
-                    : <div className="question">{value.question}</div>
-                  }
-                  {value.answerOptions.map((value, index) => {
-                    return (
-                      <div>
-                      {status.teacherMode ? 
-                        <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
-                          updateAnsweroption={updateAnsweroption}
-                          deleteAnsweroption={deleteAnsweroption}
-                        />
-                        : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible}/>}
-                      </div>
-                    )
-                  })}
-                  {status.teacherMode ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
-                </List>
-              </Paper>
+        <ButtonAppBar switchLanguage={switchLanguage} language={lan} />
+        <Switch>
+          <Route exact path="/register" component={withRouter(Register)} />
+          <Route exact path="/login" component={withRouter(Login)} />
+          <Route exact path="/">
+            <div className={classes.root}>
+              <FormControlLabel
+                control={
+                  <MaterialSwitch
+                    checked={status.teacherMode}
+                    onChange={handleChange}
+                    name="teacherMode"
+                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                  />
+                }
+                label={strings.teachermode} /><br />
+
+              {dataAlustettu ? state.map((val, index) => {
+                return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
+              }) : null}
+              {status.teacherMode ? <Button onClick={(event) => dispatch({ type: "ADD_QUIZ", data: {} })}><AddCircleIcon /></Button> : ""}
             </div>
-          );
-        })
-          : null}
-        <div className="bottomButtons">
-          {status.teacherMode ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   Add new question</Button> :
-            <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? "Hide correct answers" : "Show correct answers"}</Button>
-          }</div>
-      </Container>
-  </div>
+            {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
+              return (
+                <div className="questionCard">
+                  <Paper elevation={1}>
+                    <List className={classes.root}>
+                      <h3>{value.topicArea}</h3>
+                      {status.teacherMode ?
+                        <EditQuestion value={value} quiz={quiz} parentIndex={parentIndex} updateQuestion={updateQuestion} deleteQuestion={deleteQuestion} />
+                        : <div className="question">{value.question}</div>
+                      }
+                      {value.answerOptions.map((value, index) => {
+                        return (
+                          <div>
+                            {status.teacherMode ?
+                              <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
+                                updateAnsweroption={updateAnsweroption}
+                                deleteAnsweroption={deleteAnsweroption}
+                              />
+                              : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
+                          </div>
+                        )
+                      })}
+                      {status.teacherMode ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
+                    </List>
+                  </Paper>
+                </div>
+              );
+            })
+              : null}
+            <div className="bottomButtons">
+              {status.teacherMode ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewanswer}</Button> :
+                <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button>
+              }</div>
+
+          </Route>
+        </Switch>
+      </Container >
+    </div >
   );
 }
 export default App;

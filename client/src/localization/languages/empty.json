@@ -1,0 +1,21 @@
+{
+    "language": {
+        "login": "",
+        "register": "",
+        "email": "",
+        "password": "",
+        "reglink": "",
+        "firstname": "",
+        "surname": "",
+        "adminuser": "",
+        "teachermode": "",
+        "showcorrect": "",
+        "question": "",
+        "answer": "",
+        "addnewquestion": "",
+        "addnewanswer": "",
+        "addnewquiz": "",
+        "delete": "",
+        "regerror": ""
+    }
+}

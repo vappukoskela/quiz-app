@@ -2,7 +2,7 @@ import { Button, Checkbox, ListItem, ListItemIcon, TextField } from "@material-u
 import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-
+import strings from '../localization/strings';
 
 function EditAnswerOption(props) {
     const GreenCheckbox = withStyles({
@@ -14,14 +14,13 @@ function EditAnswerOption(props) {
         },
         checked: {},
       })((props) => <Checkbox color="default" {...props} />);
-      
 
     return (
         <ListItem key={props.value.id} role={undefined} dense >
             <ListItemIcon>
                 <GreenCheckbox
                     onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "CHECKBOX")}
-                    checked={props.value.correct}
+                    checked={false}
                     edge="start"
                     tabIndex={-1}
                 />
@@ -29,17 +28,19 @@ function EditAnswerOption(props) {
             <ListItemIcon>
                 <Checkbox
                     // TODO:
-                    // onChange={(event) => dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
+                    onChange={(event) => console.log(event, "click")}
+                //  onChange={(event) => dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
                     checked={props.value.selected}
                     edge="start"
                     tabIndex={-1}
                 />
             </ListItemIcon>
                 <div>
-                    <TextField onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "TEXT")} size="small" label={"Answer " + (props.index + 1)} variant="outlined" value={props.value.answer} />
+                    <TextField onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "TEXT")} size="small" label={(strings.answer) + " " + (props.index + 1)} variant="outlined" value={props.value.answer} />
                     <Button className="deleteButton" onClick={(event) => props.deleteAnsweroption(event, props.quiz, props.parentIndex, props.index)}><DeleteIcon /></Button>
                 </div>
         </ListItem>
     )
 }
+
 export default EditAnswerOption;

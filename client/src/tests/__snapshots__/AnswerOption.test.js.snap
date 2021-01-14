@@ -1,0 +1,206 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`does not show answer when answers not visible 1`] = `
+<li
+  className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+  disabled={false}
+>
+  <div
+    className="MuiListItemIcon-root"
+  >
+    <span
+      aria-disabled={true}
+      className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-3 MuiCheckbox-root Component-root-7 PrivateSwitchBase-disabled-5 Mui-disabled Mui-disabled MuiIconButton-edgeStart Mui-disabled"
+      hidden={false}
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={-1}
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <input
+          checked={false}
+          className="PrivateSwitchBase-input-6"
+          data-indeterminate={false}
+          disabled={true}
+          onChange={[Function]}
+          tabIndex={-1}
+          type="checkbox"
+        />
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+          />
+        </svg>
+      </span>
+    </span>
+  </div>
+  <div
+    className="MuiListItemIcon-root"
+  >
+    <span
+      aria-disabled={false}
+      className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-3 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary MuiIconButton-edgeStart"
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={null}
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <input
+          checked={false}
+          className="PrivateSwitchBase-input-6"
+          data-indeterminate={false}
+          onChange={[Function]}
+          tabIndex={-1}
+          type="checkbox"
+        />
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+          />
+        </svg>
+      </span>
+      <span
+        className="MuiTouchRipple-root"
+      />
+    </span>
+  </div>
+  <div>
+    <div
+      className="MuiListItemText-root MuiListItemText-dense"
+    />
+  </div>
+</li>
+`;
+
+exports[`renders correctly with props 1`] = `
+<li
+  className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+  disabled={false}
+>
+  <div
+    className="MuiListItemIcon-root"
+  >
+    <span
+      aria-disabled={true}
+      className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-3 MuiCheckbox-root Component-root-1 PrivateSwitchBase-disabled-5 Mui-disabled Mui-disabled MuiIconButton-edgeStart Mui-disabled"
+      hidden={true}
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={-1}
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <input
+          checked={false}
+          className="PrivateSwitchBase-input-6"
+          data-indeterminate={false}
+          disabled={true}
+          onChange={[Function]}
+          tabIndex={-1}
+          type="checkbox"
+        />
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+          />
+        </svg>
+      </span>
+    </span>
+  </div>
+  <div
+    className="MuiListItemIcon-root"
+  >
+    <span
+      aria-disabled={false}
+      className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-3 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary MuiIconButton-edgeStart"
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={null}
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <input
+          checked={false}
+          className="PrivateSwitchBase-input-6"
+          data-indeterminate={false}
+          onChange={[Function]}
+          tabIndex={-1}
+          type="checkbox"
+        />
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+          />
+        </svg>
+      </span>
+    </span>
+  </div>
+  <div>
+    <div
+      className="MuiListItemText-root MuiListItemText-dense"
+    />
+  </div>
+</li>
+`;

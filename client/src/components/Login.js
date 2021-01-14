@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Button, TextField } from '@material-ui/core';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
 import axios from 'axios'
+import strings from '../localization/strings';
 
 const Login = () => {
     const [userData, setUserData] = useState({
@@ -35,7 +42,7 @@ const Login = () => {
         <div className="container">
             <List>
                 <ListItem>
-                    <h2>Login</h2>
+                    <h2>{strings.login}</h2>
                 </ListItem>
                 <ListItem>
                     <TextField onChange={(event) => changeData(event, "email")} size="small" label="Email" variant="outlined"></TextField>
@@ -45,6 +52,9 @@ const Login = () => {
                 </ListItem>
                 <ListItem>
                     <Button variant="outlined">Login</Button>
+                </ListItem>
+                <ListItem>
+                        <Link to="/register"><i>Register here</i></Link>
                 </ListItem>
             </List>
         </div>

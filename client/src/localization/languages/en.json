@@ -1,0 +1,22 @@
+{
+    "en": {
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "reglink": "Register here",
+        "firstname": "First name",
+        "surname": "Surname",
+        "adminuser": "Admin user",
+        "teachermode": "Teacher mode",
+        "showcorrect": "Show correct answers",
+        "hidecorrect": "Hide correct answers",
+        "question": "Question",
+        "answer": "Answer",
+        "addnewquestion": "Add new question",
+        "addnewanswer": "Add new answer",
+        "addnewquiz": "Add new quiz",
+        "delete": "Delete",
+        "regerror": "Registration failed"
+    }
+}

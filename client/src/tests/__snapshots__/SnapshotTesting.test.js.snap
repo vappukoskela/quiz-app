@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <h1>
+    Hello world
+  </h1>
+  nothing to see here!
+</div>
+`;
+
+exports[`renders title 1`] = `
+<h1>
+  Hello world
+</h1>
+`;
+
+exports[`says goodbye 1`] = `
+<div>
+  <h1>
+    Hello world
+  </h1>
+  goodbye universe
+</div>
+`;
