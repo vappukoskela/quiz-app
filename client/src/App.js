@@ -144,13 +144,15 @@ function App() {
 
   const switchLanguage = (newLan) => {
     setLan(newLan)
+    strings.setLanguage(newLan)
+    console.log(newLan)
   }
 
-  useEffect(()=>{
-    strings.setLanguage(lan)
-  }, [lan])
+  // useEffect(()=>{
+  //   strings.setLanguage(lan)
+  //   console.log(lan)
+  // }, [lan])
 
- 
 
   // TODO: updateUseranswer
 

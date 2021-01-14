@@ -3,9 +3,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Button, TextField } from '@material-ui/core';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
     Link
   } from "react-router-dom";
 import axios from 'axios'
@@ -45,16 +42,16 @@ const Login = () => {
                     <h2>{strings.login}</h2>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "email")} size="small" label="Email" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "email")} size="small" label={strings.email} variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <TextField onChange={(event) => changeData(event, "password")} size="small" label="Password" type="password" variant="outlined"></TextField>
+                    <TextField onChange={(event) => changeData(event, "password")} size="small" label={strings.password} type="password" variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <Button variant="outlined">Login</Button>
+                    <Button variant="outlined">{strings.login}</Button>
                 </ListItem>
                 <ListItem>
-                        <Link to="/register"><i>Register here</i></Link>
+                        <Link to="/register"><i>{strings.reglink}</i></Link>
                 </ListItem>
             </List>
         </div>
