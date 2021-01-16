@@ -1,6 +1,10 @@
-var express = require("express")
-var cors = require("cors")
-var bodyParser = require("body-parser")
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const _ = require('lodash');
+
 const routes = require("./routes/routes");
 
 var app = express()
@@ -13,6 +17,14 @@ app.use(cors({
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }))
 app.use(routes)
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(fileUpload({
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 },
+}));
 
 // middleware jutut
 // app.use('/timeis',function(req,res,next) {
@@ -131,6 +143,53 @@ app.post('/user', cors(), (req, res, next) => {
     res.send(result.rows[0])
   })
 })
+
+// add a file
+app.post('/upload', cors(), (req, res) => {
+  /* if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  } */
+  try {
+    console.log('here')
+    if (!req.files || Object.keys(req.files).length === 0) {
+      console.log("now here", req.files)
+      return res.status(400).send('No files were uploaded.');
+    }
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let newFile = req.files.file;
+    console.log(req.files)
+    let date = Date.now().toString();
+    let fileName = 'questionPhoto' + date + req.files.file.name;
+    newFile.mv('./uploads/' + fileName)
+    res.send({
+      status: true,
+      message: "file uploaded",
+      data: {
+        name: fileName,
+        mimetype: newFile.mimetype,
+        size: newFile.size
+      }
+    })
+  }catch (err) {
+    res.status(500).send(err)
+  }
+  // newFile.mv(fileName, function (err) {
+  //     if (err) {
+  //         return res.status(500).send(err)
+  //     } else {
+  //         parser.parseBankTransactions(fileName, (items) => {
+
+  //             return res.json(items);
+
+  //         });
+  //     }
+  // });
+  console.log("hereweare")
+});
+
+//make uploads directory static
+app.use(express.static('uploads'));
+
 
 // --------------------------------------------------
 

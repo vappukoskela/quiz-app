@@ -17,10 +17,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   withRouter
 } from "react-router-dom";
-import {setLanguage} from 'react-localization';
 import strings from './localization/strings';
 
 const useStyles = makeStyles((theme) => ({
@@ -145,14 +143,7 @@ function App() {
   const switchLanguage = (newLan) => {
     setLan(newLan)
     strings.setLanguage(newLan)
-    console.log(newLan)
   }
-
-  // useEffect(()=>{
-  //   strings.setLanguage(lan)
-  //   console.log(lan)
-  // }, [lan])
-
 
   // TODO: updateUseranswer
 

@@ -21,7 +21,8 @@ let strings = new LocalizedStrings(
             "addnewanswer": "Add new answer",
             "addnewquiz": "Add new quiz",
             "delete": "Delete",
-            "regerror": "Registration failed"
+            "regerror": "Registration failed",
+            "files": "Files"
         },
         fi: {
             "login": "Kirjaudu",
@@ -41,7 +42,8 @@ let strings = new LocalizedStrings(
             "addnewanswer": "Lisää uusi vastaus",
             "addnewquiz": "Lisää uusi tentti",
             "delete": "Poista",
-            "regerror": "Rekisteröityminen epäonnistui"
+            "regerror": "Rekisteröityminen epäonnistui",
+            "files": "Tiedostot"
         }
     }
 )

@@ -27,7 +27,7 @@ const Register = () => {
         } else {
             setUserData({...userData, "role_id": 3}) // roleid 3: student
         }
-    },[isAdmin, userData])
+    },[isAdmin])
 
 
     const submitRegistration = async (e) => {
