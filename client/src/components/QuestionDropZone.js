@@ -61,6 +61,7 @@ function QuestionDropZone(props) {
         isDragReject
     } = useDropzone({ onDrop });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const style = useMemo(() => ({
         ...baseStyle,
         ...(isDragActive ? activeStyle : {}),

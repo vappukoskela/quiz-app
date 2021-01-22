@@ -16,7 +16,7 @@ function EditAnswerOption(props) {
       })((props) => <Checkbox color="default" {...props} />);
 
     return (
-        <ListItem key={props.value.id} role={undefined} dense >
+        <ListItem key={"editansweropt" + props.value.id} role={undefined} dense >
             <ListItemIcon>
                 <GreenCheckbox
                     onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "CHECKBOX")}
@@ -28,8 +28,8 @@ function EditAnswerOption(props) {
             <ListItemIcon>
                 <Checkbox
                     // TODO:
-                    onChange={(event) => console.log(event, "click")}
-                //  onChange={(event) => dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
+                    // onChange={(event) => console.log(event, "click")}
+                     onChange={(event) => props.dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: props.quiz, questionIndex: props.parentIndex, answerIndex: props.index } })}
                     checked={props.value.selected}
                     edge="start"
                     tabIndex={-1}

@@ -1,6 +1,5 @@
 import LocalizedStrings from "react-localization";
-import en from './languages/en.json'
-import fi from './languages/fi.json'
+
 let strings = new LocalizedStrings(
     {
         en: {

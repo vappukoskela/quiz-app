@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 function ButtonAppBar(props) {
-  console.log(props.language)
   strings.setLanguage(props.language)
   const classes = useStyles();
 
@@ -43,8 +42,7 @@ function ButtonAppBar(props) {
           <Link to="/login" style={{ textDecoration: 'none' }}>
             <Button variant="contained" color="primary" disableElevation>{strings.login}</Button>
           </Link>
-          {console.log(props, "props")}
-          {console.log(strings, "strings")}
+      
           <Select className={classes.lanselect} defaultValue="en" style={{ color: 'white' }} onChange={(e) => props.switchLanguage(e.target.value)}  >
             <MenuItem value="en" selected> EN </MenuItem>
             <MenuItem value="fi"> FI </MenuItem>

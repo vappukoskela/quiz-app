@@ -5,8 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { Container, Paper, Button, FormControlLabel } from '@material-ui/core';
-import { Switch as MaterialSwitch } from '@material-ui/core';
+import { Container, Paper, Button, FormControlLabel, Switch as MaterialSwitch } from '@material-ui/core';
 import axios from 'axios';
 import Register from './components/Register'
 import EditQuestion from './components/EditQuestion';
@@ -20,6 +19,10 @@ import {
   withRouter
 } from "react-router-dom";
 import strings from './localization/strings';
+import { useSnackbar, withSnackbar } from 'notistack';
+import socketIOClient from 'socket.io-client'
+import NewQuizDialog from './components/NewQuizDialog';
+const sIOEndpoint = 'ws://localhost:9000'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +64,7 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizQuestions.push(newQuestion)
       return deepCopy;
     case "ADD_QUIZ":
-      let newQuiz = { quizName: "New Quiz", quizQuestions: [{ answerOptions: [] }] }
+      let newQuiz = { id: action.data.quizId, quizname: action.data.quizname, quizQuestions: [] }
       deepCopy.push(newQuiz)
       return deepCopy;
     case "DELETE_ANSWER":
@@ -90,6 +93,7 @@ function reducer(state, action) {
 // ----------------APP-------------------------------------------------------
 
 function App() {
+
   const classes = useStyles();
   const [dataAlustettu, setDataAlustettu] = useState(false);
   const [quiz, setQuiz] = useState(0);
@@ -97,6 +101,40 @@ function App() {
   const [state, dispatch] = useReducer(reducer, []);
   const [loggedIn, setLoggedIn] = useState()
   const [lan, setLan] = useState('en')
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+
+  useEffect(() => {
+    const socket = socketIOClient(sIOEndpoint)
+    socket.on('connected', function (data) {
+      console.log("CONNECTED")
+      enqueueSnackbar('Socket connected!')
+    });
+    socket.on('update', function (data) {
+      var snackMsg = ""
+      console.log("UPDATED", data.message.payload)
+      switch (data.message.channel) {
+        case "addquiz":
+          snackMsg = "New Quiz: " + data.message.payload
+          break;
+        case "adduser":
+          snackMsg = data.message.payload + " just registered for the first time!"
+        break;
+        case "alterquiz":
+          let thisPayload = JSON.parse(data.message.payload)
+          console.log("hi from here")
+          console.log(thisPayload)
+          snackMsg = "Quiz: " + thisPayload.old + " was renamed to " + thisPayload.new
+        break;
+        case "addedrecord":
+          snackMsg = "this is a test!"
+          break;
+        default:
+        break;
+      }
+      enqueueSnackbar(snackMsg)
+    })
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,6 +183,7 @@ function App() {
     strings.setLanguage(newLan)
   }
 
+
   // TODO: updateUseranswer
 
   //// POST ---------------------------------------------------------------------------------------------------
@@ -175,6 +214,18 @@ function App() {
     }
   }
 
+  const addQuiz = async (quizname) => {
+    let body = {quizname: quizname}
+    try {
+      let result = await axios.post("http://localhost:5000/quiz/", body).then(response => {
+        console.log("new id" + response.data.id);
+        dispatch({ type: "ADD_QUIZ", data: { quizId: response.data.id, quizname: quizname} })
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   //// PUT -------------------------------------------------------------------------------------------------------
   const updateQuestion = async (event, quizIndex, questionIndex) => {
     let quizId = state[quizIndex].id;
@@ -190,7 +241,6 @@ function App() {
     }
   }
   const updateAnsweroption = async (event, quizIndex, questionIndex, answerIndex, editMode) => {
-    console.log(event)
     let quizId = state[quizIndex].id;
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
@@ -278,14 +328,15 @@ function App() {
     setStatus({ ...status, [event.target.name]: event.target.checked });
   };
 
-  const [topicList, setTopicList] = useState([])
+  // const [topicList, setTopicList] = useState([])
+  // const buildTopicList = (topic) => {
+  //   if (!topicList.includes(topic)) {
+  //     var newTopicList = [...topicList].concat(topic)
+  //     setTopicList(newTopicList)
+  //   }
+  // }
 
-  const buildTopicList = (topic) => {
-    if (!topicList.includes(topic)) {
-      var newTopicList = [...topicList].concat(topic)
-      setTopicList(newTopicList)
-    }
-  }
+ 
 
   //// JSX ------------------------------------------------------------------------------------------------------
   return (
@@ -311,7 +362,7 @@ function App() {
               {dataAlustettu ? state.map((val, index) => {
                 return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
               }) : null}
-              {status.teacherMode ? <Button onClick={(event) => dispatch({ type: "ADD_QUIZ", data: {} })}><AddCircleIcon /></Button> : ""}
+              {status.teacherMode && dataAlustettu ? <div><NewQuizDialog addNewQuiz = {addQuiz}/></div>: ""}
             </div>
             {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
               return (
@@ -330,6 +381,7 @@ function App() {
                               <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
                                 updateAnsweroption={updateAnsweroption}
                                 deleteAnsweroption={deleteAnsweroption}
+                                dispatch={dispatch}
                               />
                               : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
                           </div>
@@ -353,5 +405,5 @@ function App() {
     </div >
   );
 }
-export default App;
+export default withSnackbar(App);
 

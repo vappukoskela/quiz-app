@@ -4,12 +4,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const _ = require('lodash');
-
+const db = require('./db')
 const routes = require("./routes/routes");
 
 var app = express()
 module.exports = app
 var port = process.env.PORT || 5000
+
 app.use(bodyParser.json())
 //https://expressjs.com/en/resources/middleware/cors.html
 app.use(cors({
@@ -26,6 +27,74 @@ app.use(fileUpload({
   limits: { fileSize: 2 * 1024 * 1024 * 1024 },
 }));
 
+var pg = require('pg');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+server.listen(9000);
+app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io')) //static socket.io
+app.get('/', function (req, res, next) {
+  res.sendFile(__dirname + '/App.js');
+});
+// io.sockets.on('connection', function (socket) {
+//     socket.emit('connected', { connected: true });
+//     console.log('sdafdsa')
+
+//     socket.on('ready for data', function (data) {
+//         pg_client.on('notification', function(title) {
+//             socket.emit('update', { message: title });
+//         });
+//     });
+// });
+
+
+
+var con_string = 'tcp://postgres:ikea1234@localhost:5432/Tenttikanta';
+
+var pg_client = new pg.Client(con_string);
+pg_client.connect();
+
+var query = pg_client.query('LISTEN addedrecord');
+var query2 = pg_client.query('LISTEN addquiz');
+var query3 = pg_client.query('LISTEN alterquiz');
+var query4 = pg_client.query('LISTEN adduser');
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('connected', { connected: true });
+
+  // socket.on('ready for data', function (data) {
+  pg_client.on('notification', function (title) {
+    socket.emit('update', { message: title });
+    socket.send(title)
+  });
+  // });
+});
+
+// var newquizquery = pg_client.query('LISTEN addquiz');
+// var query = pg_client.query('LISTEN addedrecord');
+// var newuserquery = pg_client.query('LISTEN adduser');
+// var newanswerquery = pg_client.query('LISTEN addanswer')
+
+// pg_client.on('notification', async (data) => {
+//   console.log('ANSWER ADDED ', data.payload)
+// })
+
+// io.sockets.on('connection', function (socket) {
+//   socket.emit('connected', { connected: true });
+//   socket.on('ready for data', function (data) {
+//     console.log('ready for data')
+//     pg_client.on('notification', function (title) {
+//       socket.emit('update', { message: title });
+//     });
+//   });
+// });
+
+
+
 // middleware jutut
 // app.use('/timeis',function(req,res,next) {
 //   console.log('kello on:', Date.now())
@@ -33,12 +102,8 @@ app.use(fileUpload({
 // })
 // käytä to_timestamp
 
-
-
-
 // get all quizzes
-const db = require('./db')
-app.get('/quiz', cors(), (req, res, next) => {
+app.get('/quiz', (req, res, next) => {
   db.query('SELECT * FROM quizzes', (err, result) => {
     if (err) {
       return next(err)
@@ -48,7 +113,7 @@ app.get('/quiz', cors(), (req, res, next) => {
 });
 
 // get questions by quiz_id
-app.get('/quiz/:quiz_id/question', cors(), (req, res, next) => {
+app.get('/quiz/:quiz_id/question', (req, res, next) => {
   db.query('SELECT * FROM questions WHERE quiz_id = $1', [req.params.quiz_id], (err, result) => {
     if (err) {
       return next(err)
@@ -58,7 +123,7 @@ app.get('/quiz/:quiz_id/question', cors(), (req, res, next) => {
 });
 
 // get answeroptions by question_id
-app.get('/quiz/:id/question/:question_id/answer', cors(), (req, res, next) => {
+app.get('/quiz/:id/question/:question_id/answer', (req, res, next) => {
   db.query('SELECT * FROM answeroptions WHERE question_id = $1', [req.params.question_id], (err, result) => {
     if (err) {
       return next(err)
@@ -106,7 +171,6 @@ app.post('/quiz', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(result.rows[0])
     res.send(result.rows[0])
   })
 })
@@ -117,7 +181,6 @@ app.post('/quiz/:id', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(result.rows[0])
     res.send(result.rows[0])
   })
 })
@@ -128,7 +191,6 @@ app.post('/quiz/:id/question/:id2', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(result.rows[0])
     res.send(result.rows[0])
   })
 })
@@ -139,25 +201,17 @@ app.post('/user', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(result.rows[0])
     res.send(result.rows[0])
   })
 })
 
 // add a file
 app.post('/upload', cors(), (req, res) => {
-  /* if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  } */
   try {
-    console.log('here')
     if (!req.files || Object.keys(req.files).length === 0) {
-      console.log("now here", req.files)
       return res.status(400).send('No files were uploaded.');
     }
-    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let newFile = req.files.file;
-    console.log(req.files)
     let date = Date.now().toString();
     let fileName = 'questionPhoto' + date + req.files.file.name;
     newFile.mv('./uploads/' + fileName)
@@ -170,21 +224,9 @@ app.post('/upload', cors(), (req, res) => {
         size: newFile.size
       }
     })
-  }catch (err) {
+  } catch (err) {
     res.status(500).send(err)
   }
-  // newFile.mv(fileName, function (err) {
-  //     if (err) {
-  //         return res.status(500).send(err)
-  //     } else {
-  //         parser.parseBankTransactions(fileName, (items) => {
-
-  //             return res.json(items);
-
-  //         });
-  //     }
-  // });
-  console.log("hereweare")
 });
 
 //make uploads directory static
@@ -199,7 +241,6 @@ app.put('/quiz/:id', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
@@ -210,7 +251,6 @@ app.put('/quiz/:id/question/:id2', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
@@ -221,7 +261,6 @@ app.put('/quiz/:id/question/:id2/answer/:id3', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
@@ -234,7 +273,6 @@ app.delete('/quiz/:id', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
@@ -245,7 +283,6 @@ app.delete('/quiz/:id/question/:id2', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
@@ -256,7 +293,6 @@ app.delete('/quiz/:id/question/:id2/answer/:id3', cors(), (req, res, next) => {
     if (err) {
       return next(err)
     }
-    console.log(req.body)
     res.send(req.body)
   })
 })
