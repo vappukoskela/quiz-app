@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 var path = null;
 switch (process.env.NODE_ENV){
   case 'production':
-    path = ''
+    path = 'https://vappus-quiz-app.herokuapp.com/'
     break;
   case 'development':
     path = 'http://localhost:5000'
