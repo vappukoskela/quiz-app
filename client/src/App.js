@@ -22,7 +22,8 @@ import strings from './localization/strings';
 import { useSnackbar, withSnackbar } from 'notistack';
 import socketIOClient from 'socket.io-client'
 import NewQuizDialog from './components/NewQuizDialog';
-const sIOEndpoint = 'ws://localhost:9000'
+const sIOEndpoint = 'ws://vappus-quiz-app.herokuapp.com:9000'
+// const sIOEndpoint = 'ws://localhost:9000'
 
 const useStyles = makeStyles((theme) => ({
   root: {
