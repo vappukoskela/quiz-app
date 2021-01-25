@@ -35,6 +35,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// ENVIRONMENTS 
+
+var path = null;
+switch (process.env.NODE_ENV){
+  case 'production':
+    path = ''
+    break;
+  case 'development':
+    path = 'http://localhost:5000'
+    break;
+  case 'test':
+    path = 'http://localhost:5000'
+    break;
+    default:
+      throw "Environment not set"
+  }
+
 // ----------------REDUCER----------------------------------------------------
 
 function reducer(state, action) {
@@ -108,6 +125,7 @@ function App() {
     const socket = socketIOClient(sIOEndpoint)
     socket.on('connected', function (data) {
       console.log("CONNECTED")
+      socket.emit('ready for data', {})
       enqueueSnackbar('Socket connected!')
     });
     socket.on('update', function (data) {
