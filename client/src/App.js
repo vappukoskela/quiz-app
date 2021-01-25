@@ -35,28 +35,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// ----------------REDUCER----------------------------------------------------
 
 var path = null;
-switch (process.env.NODE_ENV){
+switch (process.env.NODE_ENV) {
 
   case 'production':
-    console.log(process.env.NODE_ENV)
     path = 'https://vappus-quiz-app.herokuapp.com/'
     break;
   case 'development':
-    console.log(process.env.NODE_ENV)
     path = 'http://localhost:5000/'
     break;
   case 'test':
-    console.log(process.env.NODE_ENV)
     path = 'http://localhost:5000/'
     break;
-    default:
-      throw "Environment not set"
-  }
+  default:
+    throw "Environment not set"
+}
 
-
+// ----------------REDUCER----------------------------------------------------
 function reducer(state, action) {
   let deepCopy = JSON.parse(JSON.stringify(state))
   switch (action.type) {
@@ -123,7 +119,7 @@ function App() {
   const [lan, setLan] = useState('en')
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-// ENVIRONMENTS 
+  // ENVIRONMENTS 
 
   useEffect(() => {
     const socket = socketIOClient(sIOEndpoint)
@@ -141,18 +137,18 @@ function App() {
           break;
         case "adduser":
           snackMsg = data.message.payload + " just registered for the first time!"
-        break;
+          break;
         case "alterquiz":
           let thisPayload = JSON.parse(data.message.payload)
           console.log("hi from here")
           console.log(thisPayload)
           snackMsg = "Quiz: " + thisPayload.old + " was renamed to " + thisPayload.new
-        break;
+          break;
         case "addedrecord":
           snackMsg = "this is a test!"
           break;
         default:
-        break;
+          break;
       }
       enqueueSnackbar(snackMsg)
     })
@@ -161,16 +157,16 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let result = await axios.get(path+"quiz")
+        let result = await axios.get(path + "quiz")
         if (result.data.length > 0) {
           for (var i = 0; i < result.data.length; i++) {
             result.data[i].quizQuestions = []
-            let questions = await axios.get(path+"quiz/" + result.data[i].id + "/question/")
+            let questions = await axios.get(path + "quiz/" + result.data[i].id + "/question/")
             result.data[i].quizQuestions = questions.data;
             if (result.data[i].quizQuestions.length > 0) {
               for (var j = 0; j < result.data[i].quizQuestions.length; j++) {
                 result.data[i].quizQuestions[j].answerOptions = [];
-                let answers = await axios.get(path+"quiz/" + result.data[i].id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
+                let answers = await axios.get(path + "quiz/" + result.data[i].id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
                 result.data[i].quizQuestions[j].answerOptions = answers.data;
               }
             }
@@ -213,7 +209,7 @@ function App() {
     let quizId = state[quizIndex].id;
     let body = {}
     try {
-      let result = await axios.post(path+"quiz/" + quizId, body).then(response => {
+      let result = await axios.post(path + "quiz/" + quizId, body).then(response => {
         console.log("new id" + response.data.id);
         dispatch({ type: "ADD_QUESTION", data: { quizIndex: quiz, id: response.data.id } })
       })
@@ -227,7 +223,7 @@ function App() {
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     let body = { correct: false }
     try {
-      let result = await axios.post(path+"quiz/" + quizId + "/question/" + questionId, body).then(response => {
+      let result = await axios.post(path + "quiz/" + quizId + "/question/" + questionId, body).then(response => {
         console.log("new id" + response.data.id);
         dispatch({ type: "ADD_ANSWER", data: { quizIndex: quiz, questionIndex: questionIndex, id: response.data.id } })
       })
@@ -237,11 +233,11 @@ function App() {
   }
 
   const addQuiz = async (quizname) => {
-    let body = {quizname: quizname}
+    let body = { quizname: quizname }
     try {
-      let result = await axios.post(path+"quiz/", body).then(response => {
+      let result = await axios.post(path + "quiz/", body).then(response => {
         console.log("new id" + response.data.id);
-        dispatch({ type: "ADD_QUIZ", data: { quizId: response.data.id, quizname: quizname} })
+        dispatch({ type: "ADD_QUIZ", data: { quizId: response.data.id, quizname: quizname } })
       })
     } catch (e) {
       console.log(e);
@@ -256,7 +252,7 @@ function App() {
       question: event.target.value
     }
     try {
-      let result = await axios.put(path+"quiz/" + quizId + "/question/" + questionId, body)
+      let result = await axios.put(path + "quiz/" + quizId + "/question/" + questionId, body)
       dispatch({ type: "QUESTION_CHANGED", data: { newText: body.question, quizIndex: quizIndex, questionIndex: questionIndex } })
     } catch (e) {
       console.log(e)
@@ -282,7 +278,7 @@ function App() {
         break;
     }
     try {
-      let result = await axios.put(path+"quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId, body)
+      let result = await axios.put(path + "quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId, body)
       switch (editMode) {
         case "TEXT":
           dispatch({ type: "ANSWER_CHANGED", data: { newText: body.answer, quizIndex: quizIndex, questionIndex: questionIndex, answerIndex: answerIndex } })
@@ -304,7 +300,7 @@ function App() {
     let quizId = state[quizIndex].id;
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     try {
-      let result = await axios.delete(path+"quiz/" + quizId + "/question/" + questionId)
+      let result = await axios.delete(path + "quiz/" + quizId + "/question/" + questionId)
       dispatch({ type: "DELETE_QUESTION", data: { newText: '', quizIndex: quiz, questionIndex: questionIndex } })
     } catch (e) {
       console.log(e)
@@ -314,7 +310,7 @@ function App() {
   const deleteQuiz = async (event, quizIndex) => {
     let quizId = state[quizIndex].id;
     try {
-      let result = await axios.delete(path+"quiz/" + quizId)
+      let result = await axios.delete(path + "quiz/" + quizId)
       dispatch({ type: "DELETE_QUIZ", data: { newText: '', quizIndex: quiz } })
     } catch (e) {
       console.log(e)
@@ -326,7 +322,7 @@ function App() {
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
     try {
-      let result = await axios.delete(path+"quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId)
+      let result = await axios.delete(path + "quiz/" + quizId + "/question/" + questionId + "/answer/" + answerId)
       dispatch({ type: "DELETE_ANSWER", data: { newText: '', quizIndex: quiz, questionIndex: questionIndex, answerIndex: answerIndex } })
     } catch (e) {
       console.log(e)
@@ -358,7 +354,7 @@ function App() {
   //   }
   // }
 
- 
+
 
   //// JSX ------------------------------------------------------------------------------------------------------
   return (
@@ -384,7 +380,7 @@ function App() {
               {dataAlustettu ? state.map((val, index) => {
                 return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
               }) : null}
-              {status.teacherMode && dataAlustettu ? <div><NewQuizDialog addNewQuiz = {addQuiz}/></div>: ""}
+              {status.teacherMode && dataAlustettu ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
             </div>
             {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
               return (
