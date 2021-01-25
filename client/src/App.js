@@ -37,6 +37,22 @@ const useStyles = makeStyles((theme) => ({
 
 // ----------------REDUCER----------------------------------------------------
 
+var path = null;
+switch (process.env.NODE_ENV){
+  case 'production':
+    path = 'https://vappus-quiz-app.herokuapp.com/'
+    break;
+  case 'development':
+    path = 'http://localhost:5000/'
+    break;
+  case 'test':
+    path = 'http://localhost:5000/'
+    break;
+    default:
+      throw "Environment not set"
+  }
+
+
 function reducer(state, action) {
   let deepCopy = JSON.parse(JSON.stringify(state))
   switch (action.type) {
@@ -104,22 +120,6 @@ function App() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 // ENVIRONMENTS 
-
-var path = null;
-switch (process.env.NODE_ENV){
-  case 'production':
-    path = 'https://vappus-quiz-app.herokuapp.com/'
-    break;
-  case 'development':
-    path = 'http://localhost:5000/'
-    break;
-  case 'test':
-    path = 'http://localhost:5000/'
-    break;
-    default:
-      throw "Environment not set"
-  }
-
 
   useEffect(() => {
     const socket = socketIOClient(sIOEndpoint)
