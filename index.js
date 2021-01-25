@@ -34,10 +34,10 @@ app.use(fileUpload({
 var pg = require('pg');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server, {
-  cors: {
-    origin: "http://localhost:5000",
-    methods: ["GET", "POST"]
-  }
+  // cors: {
+  //   origin: "http://localhost:5000",
+  //   methods: ["GET", "POST"]
+  // }
 });
 server.listen(9000);
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io')) //static socket.io
