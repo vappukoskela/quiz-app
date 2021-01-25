@@ -39,13 +39,17 @@ const useStyles = makeStyles((theme) => ({
 
 var path = null;
 switch (process.env.NODE_ENV){
+
   case 'production':
+    console.log(process.env.NODE_ENV)
     path = 'https://vappus-quiz-app.herokuapp.com/'
     break;
   case 'development':
+    console.log(process.env.NODE_ENV)
     path = 'http://localhost:5000/'
     break;
   case 'test':
+    console.log(process.env.NODE_ENV)
     path = 'http://localhost:5000/'
     break;
     default:
