@@ -15,10 +15,12 @@ app.use(express.static('./client/build'))
 
 app.use(bodyParser.json())
 //https://expressjs.com/en/resources/middleware/cors.html
-app.use(cors({
-  origin: 'http://localhost:5000',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}))
+app.use(cors(
+//   {
+//   origin: 'http://localhost:5000',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
+))
 app.use(routes)
 
 
