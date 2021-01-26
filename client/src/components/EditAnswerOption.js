@@ -20,7 +20,7 @@ function EditAnswerOption(props) {
             <ListItemIcon>
                 <GreenCheckbox
                     onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "CHECKBOX")}
-                    checked={false}
+                    checked={props.value.correct}
                     edge="start"
                     tabIndex={-1}
                 />
