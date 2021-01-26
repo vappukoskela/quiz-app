@@ -22,6 +22,8 @@ import strings from './localization/strings';
 import { useSnackbar, withSnackbar } from 'notistack';
 import socketIOClient from 'socket.io-client'
 import NewQuizDialog from './components/NewQuizDialog';
+import EditQuizTitleComponent from './components/EditQuizTitleComponent';
+import QuizTitleComponent from './components/QuizTitleComponent';
 const sIOEndpoint = 'wss://vappus-quiz-app.herokuapp.com:9000'
 // const sIOEndpoint = 'ws://localhost:9000'
 
@@ -69,7 +71,6 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].question = action.data.newText;
       return deepCopy;
     case "QUIZ_CHANGED":
-      //TODO: implement controls
       deepCopy[action.data.quizIndex].quizName = action.data.newText;
       return deepCopy;
     case "ADD_ANSWER":
@@ -91,8 +92,7 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizQuestions.splice(action.data.questionIndex, 1)
       return deepCopy;
     case "DELETE_QUIZ":
-      // TODO: implement controls
-      deepCopy[action.data.quizIndex].splice(action.data.quizIndex, 1)
+      deepCopy.splice(action.data.quizIndex, 1)
       return deepCopy;
     case "SELECT_TOGGLE":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].selected =
@@ -246,6 +246,19 @@ function App() {
   }
 
   //// PUT -------------------------------------------------------------------------------------------------------
+  const updateQuiz = async (event, quizIndex,) => {
+    let quizId = state[quizIndex].id;
+    let body = {
+      quizname: event.target.value
+    }
+    try {
+      let result = await axios.put(path + "quiz/" + quizId, body)
+      dispatch({ type: "QUIZ_CHANGED", data: { newText: body.question, quizIndex: quizIndex } })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   const updateQuestion = async (event, quizIndex, questionIndex) => {
     let quizId = state[quizIndex].id;
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
@@ -311,8 +324,9 @@ function App() {
   const deleteQuiz = async (event, quizIndex) => {
     let quizId = state[quizIndex].id;
     try {
+      setQuiz(0)
       let result = await axios.delete(path + "quiz/" + quizId)
-      dispatch({ type: "DELETE_QUIZ", data: { newText: '', quizIndex: quiz } })
+      dispatch({ type: "DELETE_QUIZ", data: { newText: '', quizIndex: quizIndex } })
     } catch (e) {
       console.log(e)
     }
@@ -383,6 +397,15 @@ function App() {
               }) : null}
               {status.teacherMode && dataAlustettu ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
             </div>
+            {dataAlustettu ?
+              <div className="questionCard">
+                <Paper elevation={1} margin="10%">
+                  {status.teacherMode 
+                  ? <EditQuizTitleComponent quizname={state[quiz].quizname} quizid={state[quiz].id} quizindex={quiz} updateQuiz={updateQuiz} deleteQuiz={deleteQuiz}/> 
+                  : <QuizTitleComponent quizname={state[quiz].quizname}/>}
+                </Paper>
+              </div>
+              : ""}
             {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
               return (
                 <div className="questionCard">

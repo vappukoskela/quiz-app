@@ -20,24 +20,24 @@ function NewQuizDialog(props) {
   };
 
   const handleSubmit = (event) => {
-      handleClose();
-      props.addNewQuiz(quizname);
+    handleClose();
+    props.addNewQuiz(quizname);
   }
 
   return (
     <div>
-     <Button onClick={handleClickOpen}><AddCircleIcon /> Add new quiz </Button> 
+      <Button onClick={handleClickOpen}><AddCircleIcon /> Add new quiz </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Create New Quiz</DialogTitle>
         <DialogContent>
-     
+
           <TextField
             autoFocus
             margin="dense"
             id="name"
             label="Quiz name"
             fullWidth
-            onChange={(e)=>setQuizname(e.target.value)}
+            onChange={(e) => setQuizname(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
