@@ -5,7 +5,11 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const _ = require('lodash');
 const db = require('./db')
-const routes = require("./routes/routes");
+const routes = require('./routes/routes');
+const secureRoute = require('./routes/secure-routes');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+
 
 var app = express()
 module.exports = app
@@ -21,7 +25,9 @@ app.use(cors(
 //   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 // }
 ))
-app.use(routes)
+app.use('/', routes)
+// Plug in the JWT strategy as a middleware so only verified users can access this route.
+app.use('/user', passport.authenticate('jwt', { session: false }), secureRoute);
 
 
 app.use(bodyParser.json());
@@ -68,7 +74,6 @@ io.sockets.on('connection', function (socket) {
     });
   });
 });
-
 
 
 

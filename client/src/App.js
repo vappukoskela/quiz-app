@@ -116,11 +116,13 @@ function App() {
   const [quiz, setQuiz] = useState(0);
   const [answersVisible, setAnswersVisible] = useState(false);
   const [state, dispatch] = useReducer(reducer, []);
-  const [loggedIn, setLoggedIn] = useState()
+  const [loggedIn, setLoggedIn] = useState(false)
   const [lan, setLan] = useState('en')
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  // ENVIRONMENTS 
+
+
+
 
   useEffect(() => {
     const socket = socketIOClient(sIOEndpoint)

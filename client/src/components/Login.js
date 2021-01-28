@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import { Button, TextField } from '@material-ui/core';
 import {
     Link
-  } from "react-router-dom";
+} from "react-router-dom";
 import axios from 'axios'
 import strings from '../localization/strings';
 
@@ -25,16 +25,17 @@ const Login = () => {
         }
         console.log(body)
         e.preventDefault()
-        // try {
-        //      await axios.post("http://localhost:5000/register/", body).then(response => {
-        //         setErrorMsg("");})
-        
-        // } catch (e) {
-        //     setErrorMsg("Registration failed")
-        //     console.log("registration error", e)
-        // }
+        try {
+            await axios.post("http://localhost:5000/login/", body).then(response => {
+                console.log(response, "LOGIN RESPONSE")
+                localStorage.setItem('jwtToken', response.data.token)
+            })
+
+        } catch (e) {
+            console.log("registration error", e)
+        }
     }
-// localstorage jwtToken tallenna userid rooli
+    // localstorage jwtToken tallenna userid rooli
     return (
         <div className="container">
             <List>
@@ -48,10 +49,10 @@ const Login = () => {
                     <TextField onChange={(event) => changeData(event, "password")} size="small" label={strings.password} type="password" variant="outlined"></TextField>
                 </ListItem>
                 <ListItem>
-                    <Button variant="outlined">{strings.login}</Button>
+                    <Button variant="outlined" onClick={submitLogin}>{strings.login}</Button>
                 </ListItem>
                 <ListItem>
-                        <Link to="/register"><i>{strings.reglink}</i></Link>
+                    <Link to="/register"><i>{strings.reglink}</i></Link>
                 </ListItem>
             </List>
         </div>
