@@ -249,6 +249,7 @@ function App() {
 
   //// PUT -------------------------------------------------------------------------------------------------------
   const updateQuiz = async (event, quizIndex,) => {
+    console.log(event.target.value)
     let quizId = state[quizIndex].id;
     let body = {
       quizname: event.target.value
