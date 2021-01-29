@@ -71,7 +71,7 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].question = action.data.newText;
       return deepCopy;
     case "QUIZ_CHANGED":
-      deepCopy[action.data.quizIndex].quizName = action.data.newText;
+      deepCopy[action.data.quizIndex].quizname = action.data.newText;
       return deepCopy;
     case "ADD_ANSWER":
       let newAnswer = { answer: "", correct: false, selected: false, id: action.data.id }
@@ -256,7 +256,7 @@ function App() {
     }
     try {
       let result = await axios.put(path + "quiz/" + quizId, body)
-      dispatch({ type: "QUIZ_CHANGED", data: { newText: body.question, quizIndex: quizIndex } })
+      dispatch({ type: "QUIZ_CHANGED", data: { newText: body.quizname, quizIndex: quizIndex } })
     } catch (e) {
       console.log(e)
     }

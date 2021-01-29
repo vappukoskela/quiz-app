@@ -21,7 +21,11 @@ let strings = new LocalizedStrings(
             "addnewquiz": "Add new quiz",
             "delete": "Delete",
             "regerror": "Registration failed",
-            "files": "Files"
+            "files": "Files",
+            "deleting": "Deleting",
+            "areyousuredelete": "Are you sure you want to delete this quiz?",
+            "actioncannotbeundone": "This action cannot be undone!",
+            "cancel": "Cancel"
         },
         fi: {
             "login": "Kirjaudu",
@@ -42,7 +46,11 @@ let strings = new LocalizedStrings(
             "addnewquiz": "Lisää uusi tentti",
             "delete": "Poista",
             "regerror": "Rekisteröityminen epäonnistui",
-            "files": "Tiedostot"
+            "files": "Tiedostot",
+            "deleting": "Poistetaan",
+            "areyousuredelete": "Oletko varma, että haluat poistaa tämän tentin?",
+            "actioncannotbeundone": "Tätä toimintoa ei voi peruuttaa!",
+            "cancel": "Peruuta"
         }
     }
 )

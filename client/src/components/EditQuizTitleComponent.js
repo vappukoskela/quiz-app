@@ -30,21 +30,21 @@ function EditQuizTitleComponent(props) {
                 <TextField onChange={(event) => props.updateQuiz(event, props.quizindex)} size="small" variant="outlined" value={props.quizname} />
                 <Button className="deleteButton" onClick={handleClickOpen}><DeleteIcon /></Button>
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Deleting {props.quizname}</DialogTitle>
+                    <DialogTitle id="form-dialog-title">{strings.deleting} {props.quizname}</DialogTitle>
                     <DialogContent>
                         <p>
-                            Are you sure you want to delete this quiz?
+                            {strings.areyousuredelete}
                         </p>
                         <p>
-                            <u>This action cannot be undone!</u>
+                            <u>{strings.actioncannotbeundone}</u>
                         </p>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose} color="primary">
-                            Cancel
+                            {strings.cancel}
                         </Button>
                         <Button onClick={handleSubmit} color="secondary">
-                            Delete
+                            {strings.delete}
                         </Button>
                     </DialogActions>
                 </Dialog>
