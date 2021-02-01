@@ -10,27 +10,34 @@ const secureRoute = require('./routes/secure-routes');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
-
 var app = express()
 module.exports = app
 var port = process.env.PORT || 5000
 
 app.use(express.static('./client/build'))
-
 app.use(bodyParser.json())
-//https://expressjs.com/en/resources/middleware/cors.html
+
+var appOrigin = null
+var con_string = null;
+
+if (!process.env.HEROKU) {
+  con_string = 'tcp://postgres:ikea1234@localhost:5432/Tenttikanta';
+  appOrigin = 'http://localhost:3000'
+} else {
+  con_string = 'tcp://postgres:ikea1234@localhost:5432/Tenttikanta';
+  appOrigin = 'https://vappus-quiz-app.herokuapp.com'
+  // con_string = process.env.DATABASE_URL
+}
+
 app.use(cors(
-//   {
-//   origin: 'http://localhost:5000',
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
+  {
+    origin: appOrigin,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
 ))
 app.use('/', routes)
-// Plug in the JWT strategy as a middleware so only verified users can access this route.
 app.use('/user', passport.authenticate('jwt', { session: false }), secureRoute);
 
-
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(fileUpload({
@@ -41,20 +48,14 @@ var pg = require('pg');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server, {
   cors: {
-    origin: "https://https://vappus-quiz-app.herokuapp.com",
+    origin: appOrigin,
     methods: ["GET", "POST"]
   }
 });
-// server.listen(9000);
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io')) //static socket.io
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/App.js');
 });
-
-
-
-
-var con_string = 'tcp://postgres:ikea1234@localhost:5432/Tenttikanta';
 
 var pg_client = new pg.Client(con_string);
 pg_client.connect();
@@ -144,8 +145,8 @@ app.get('/user/:id', cors(), (req, res, next) => {
     res.send(result.rows[0])
   })
 })
-// --------------------- POST -----------------------
 
+// --------------------- POST -----------------------
 
 // add a quiz
 app.post('/quiz', cors(), (req, res, next) => {
@@ -281,8 +282,8 @@ app.delete('/quiz/:id/question/:id2/answer/:id3', cors(), (req, res, next) => {
 
 // ------ LISTEN -------------------------
 
-app.get('*', (req,res) => {
-	res.sendFile(path.join(__dirname+'/client/build/index.html'))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
 })
 
 server.listen(process.env.PORT || port, () => {

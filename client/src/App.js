@@ -22,7 +22,7 @@ import socketIOClient from 'socket.io-client'
 import NewQuizDialog from './components/NewQuizDialog';
 import EditQuizTitleComponent from './components/EditQuizTitleComponent';
 import QuizTitleComponent from './components/QuizTitleComponent';
-const sIOEndpoint = 'wss://vappus-quiz-app.herokuapp.com:9000'
+var sIOEndpoint = ''
 // const sIOEndpoint = 'ws://localhost:9000'
 
 const useStyles = makeStyles((theme) => ({
@@ -42,9 +42,11 @@ switch (process.env.NODE_ENV) {
 
   case 'production':
     path = 'https://vappus-quiz-app.herokuapp.com/'
+    sIOEndpoint = 'https://vappus-quiz-app.herokuapp.com'
     break;
   case 'development':
     path = 'http://localhost:5000/'
+    sIOEndpoint = 'http://localhost:5000'
     break;
   case 'test':
     path = 'http://localhost:5000/'
@@ -225,6 +227,7 @@ function App() {
       }
       enqueueSnackbar(snackMsg)
     })
+    return 
   }, [])
 
   useEffect(() => {
@@ -478,7 +481,7 @@ function App() {
                 </div>
                 {dataAlustettu ?
                   <div className="questionCard">
-                    <Paper elevation={1} margin="10%">
+                    <Paper elevation={1} padding="10%">
                       {admin
                         ? <EditQuizTitleComponent quizname={state[quiz].quizname} quizid={state[quiz].id} quizindex={quiz} updateQuiz={updateQuiz} deleteQuiz={deleteQuiz} />
                         : <QuizTitleComponent quizname={state[quiz].quizname} />}
