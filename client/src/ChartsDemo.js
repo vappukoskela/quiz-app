@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import {
     Chart,

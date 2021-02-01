@@ -45,7 +45,7 @@ var io = require('socket.io')(server, {
     methods: ["GET", "POST"]
   }
 });
-server.listen(9000);
+// server.listen(9000);
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io')) //static socket.io
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/App.js');
@@ -285,6 +285,6 @@ app.get('*', (req,res) => {
 	res.sendFile(path.join(__dirname+'/client/build/index.html'))
 })
 
-app.listen(process.env.PORT || port, () => {
+server.listen(process.env.PORT || port, () => {
   console.log("Palvelin käynnistyi portissa: " + port)
 })

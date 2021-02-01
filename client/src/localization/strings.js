@@ -25,7 +25,15 @@ let strings = new LocalizedStrings(
             "deleting": "Deleting",
             "areyousuredelete": "Are you sure you want to delete this quiz?",
             "actioncannotbeundone": "This action cannot be undone!",
-            "cancel": "Cancel"
+            "cancel": "Cancel",
+            "logout": "Logout",
+            "landingtext": "Please log in or register to continue",
+            "loginfail": "Login failed",
+            "loginsuccess": "Login successful! Welcome",
+            "registersuccess": "Registration successful! Welcome",
+            "registerfail": "Registration failed",
+            "greet": "Hello",
+            "userinrole": "User in role"
         },
         fi: {
             "login": "Kirjaudu",
@@ -50,7 +58,15 @@ let strings = new LocalizedStrings(
             "deleting": "Poistetaan",
             "areyousuredelete": "Oletko varma, että haluat poistaa tämän tentin?",
             "actioncannotbeundone": "Tätä toimintoa ei voi peruuttaa!",
-            "cancel": "Peruuta"
+            "cancel": "Peruuta",
+            "logout": "Kirjaudu ulos",
+            "landingtext": "Kirjauduthan sisään jatkaaksesi",
+            "loginfail": "Kirjautuminen epäonnistui",
+            "loginsuccess": "Kirjautuminen onnistui! Tervetuloa",
+            "registersuccess": "Rekisteröityminen onnistui! Tervetuloa",
+            "registerfail": "Rekisteröityminen epäonnistui",
+            "greet": "Hei",
+            "userinrole": "Käyttäjä roolissa"
         }
     }
 )

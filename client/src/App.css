@@ -72,3 +72,12 @@
 .quizTitle {
   padding:5%
 }
+.greeting {
+  float: right;
+  color: grey;
+  font-style: italic;
+  padding-bottom: 5%;
+}
+.greetingContainer {
+  padding-bottom: 5%;
+}

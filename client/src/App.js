@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { Container, Paper, Button, FormControlLabel, Switch as MaterialSwitch } from '@material-ui/core';
+import { Container, Paper, Button } from '@material-ui/core';
 import axios from 'axios';
 import Register from './components/Register'
 import EditQuestion from './components/EditQuestion';
@@ -13,10 +13,8 @@ import EditAnswerOption from './components/EditAnswerOption';
 import AnswerOption from './components/AnswerOption';
 import Login from './components/Login';
 import {
-  BrowserRouter as Router,
   Switch,
-  Route,
-  withRouter
+  Route
 } from "react-router-dom";
 import strings from './localization/strings';
 import { useSnackbar, withSnackbar } from 'notistack';
@@ -52,6 +50,7 @@ switch (process.env.NODE_ENV) {
     path = 'http://localhost:5000/'
     break;
   default:
+    // eslint-disable-next-line no-throw-literal
     throw "Environment not set"
 }
 
@@ -117,12 +116,83 @@ function App() {
   const [answersVisible, setAnswersVisible] = useState(false);
   const [state, dispatch] = useReducer(reducer, []);
   const [loggedIn, setLoggedIn] = useState(false)
+  const [admin, setAdmin] = useState(false)
   const [lan, setLan] = useState('en')
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
+  const [user, setUser] = useState({
+    firstname: "",
+    surname: "",
+    id: null,
+    role_id: null
+  })
 
+  /// LOGIN
 
+  
+  const submitRegistration = async (userData) => {
+    console.log(userData)
+    let body = {
+        email: userData.email,
+        password: userData.password,
+        firstname: userData.firstname,
+        surname: userData.surname,
+        role_id: userData.role_id
+    }
+    console.log(body)
+    try {
+        await axios.post("http://localhost:5000/register/", body).then(response => {
+          var snackMsg = strings.registersuccess
+          enqueueSnackbar(snackMsg, { variant: 'success' })
+          setUser(userData)
+          if (userData.role_id == 2) {
+            setAdmin(true)
+          }
+          setLoggedIn(true)
+        })
 
+    } catch (e) {
+      var snackMsg = strings.registerfail
+      enqueueSnackbar(snackMsg, { variant: 'error' })
+      console.log("registration error", e)
+    }
+}
 
+  const submitLogin = async (userData) => {
+    console.log(userData)
+    let body = {
+      email: userData.email,
+      password: userData.password,
+    }
+    console.log(body)
+    try {
+      await axios.post("http://localhost:5000/login/", body).then(response => {
+        console.log(response, "LOGIN RESPONSE")
+        localStorage.setItem('jwtToken', response.data.token)
+        setUser({ firstname: response.data.userObj.firstname, surname: response.data.userObj.surname, id: response.data.userObj.surname, role_id: response.data.userObj.role_id })
+        if (response.data.userObj.role_id == 2) {
+          setAdmin(true)
+        }
+        setLoggedIn(true)
+        var snackMsg = strings.loginsuccess
+        enqueueSnackbar(snackMsg, { variant: 'success' })
+      })
+    } catch (e) {
+      var snackMsg = strings.loginfail
+      enqueueSnackbar(snackMsg, { variant: 'error' })
+      console.log("login error", e)
+    }
+  }
+
+  const logOut = () => {
+    setUser({
+      firstname: "",
+      surname: "",
+      id: null,
+      role_id: null
+    })
+    setLoggedIn(false)
+    setAdmin(false)
+  }
 
   useEffect(() => {
     const socket = socketIOClient(sIOEndpoint)
@@ -178,6 +248,7 @@ function App() {
           dispatch({ type: "INIT_DATA", data: result.data })
           setDataAlustettu(true)
         } else {
+          // eslint-disable-next-line no-throw-literal
           throw ("No data :(")
         }
       }
@@ -378,13 +449,18 @@ function App() {
   return (
     <div>
       <Container className="quizContainer">
-        <ButtonAppBar switchLanguage={switchLanguage} language={lan} />
+        <ButtonAppBar switchLanguage={switchLanguage} isLoggedIn={loggedIn} logOut={logOut} language={lan} />
         <Switch>
-          <Route exact path="/register" component={withRouter(Register)} />
-          <Route exact path="/login" component={withRouter(Login)} />
+          <Route exact path="/register" component={() => <Register submitRegistration={submitRegistration} isRegistered={loggedIn}/>} />
+          {/* <Route exact path="/login" component={() => <Login submitLogin={submitLogin} isLoggedIn={loggedIn} />} /> */}
           <Route exact path="/">
-            <div className={classes.root}>
-              <FormControlLabel
+            {loggedIn ?
+              <div>
+                <div className="greetingContainer">
+                  <p className="greeting">{strings.greet}, {user.firstname} {user.surname}<br/>
+                  {strings.userinrole}: {user.role_id}</p></div>
+                <div className={classes.root}>
+                  {/* <FormControlLabel
                 control={
                   <MaterialSwitch
                     checked={status.teacherMode}
@@ -393,56 +469,63 @@ function App() {
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                   />
                 }
-                label={strings.teachermode} /><br />
+                label={strings.teachermode} /><br /> */}
 
-              {dataAlustettu ? state.map((val, index) => {
-                return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
-              }) : null}
-              {status.teacherMode && dataAlustettu ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
-            </div>
-            {dataAlustettu ?
-              <div className="questionCard">
-                <Paper elevation={1} margin="10%">
-                  {status.teacherMode 
-                  ? <EditQuizTitleComponent quizname={state[quiz].quizname} quizid={state[quiz].id} quizindex={quiz} updateQuiz={updateQuiz} deleteQuiz={deleteQuiz}/> 
-                  : <QuizTitleComponent quizname={state[quiz].quizname}/>}
-                </Paper>
-              </div>
-              : ""}
-            {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
-              return (
-                <div className="questionCard">
-                  <Paper elevation={1}>
-                    <List className={classes.root}>
-                      <h3>{value.topicArea}</h3>
-                      {status.teacherMode ?
-                        <EditQuestion value={value} quiz={quiz} parentIndex={parentIndex} updateQuestion={updateQuestion} deleteQuestion={deleteQuestion} />
-                        : <div className="question">{value.question}</div>
-                      }
-                      {value.answerOptions.map((value, index) => {
-                        return (
-                          <div>
-                            {status.teacherMode ?
-                              <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
-                                updateAnsweroption={updateAnsweroption}
-                                deleteAnsweroption={deleteAnsweroption}
-                                dispatch={dispatch}
-                              />
-                              : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
-                          </div>
-                        )
-                      })}
-                      {status.teacherMode ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
-                    </List>
-                  </Paper>
+                  {dataAlustettu ? state.map((val, index) => {
+                    return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
+                  }) : null}
+                  {admin && dataAlustettu ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
                 </div>
-              );
-            })
-              : null}
-            <div className="bottomButtons">
-              {status.teacherMode ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewanswer}</Button> :
-                <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button>
-              }</div>
+                {dataAlustettu ?
+                  <div className="questionCard">
+                    <Paper elevation={1} margin="10%">
+                      {admin
+                        ? <EditQuizTitleComponent quizname={state[quiz].quizname} quizid={state[quiz].id} quizindex={quiz} updateQuiz={updateQuiz} deleteQuiz={deleteQuiz} />
+                        : <QuizTitleComponent quizname={state[quiz].quizname} />}
+                    </Paper>
+                  </div>
+                  : ""}
+                {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
+                  return (
+                    <div className="questionCard">
+                      <Paper elevation={1}>
+                        <List className={classes.root}>
+                          <h3>{value.topicArea}</h3>
+                          {admin ?
+                            <EditQuestion value={value} quiz={quiz} parentIndex={parentIndex} updateQuestion={updateQuestion} deleteQuestion={deleteQuestion} />
+                            : <div className="question">{value.question}</div>
+                          }
+                          {value.answerOptions.map((value, index) => {
+                            return (
+                              <div>
+                                {admin ?
+                                  <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
+                                    updateAnsweroption={updateAnsweroption}
+                                    deleteAnsweroption={deleteAnsweroption}
+                                    dispatch={dispatch}
+                                  />
+                                  : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
+                              </div>
+                            )
+                          })}
+                          {admin ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
+                        </List>
+                      </Paper>
+                    </div>
+                  );
+                })
+                  : null}
+                <div className="bottomButtons">
+                  {admin ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewquestion}</Button> :
+                    <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button>
+                  }</div>
+              </div> :
+              <Login submitLogin={submitLogin} isLoggedIn={loggedIn} />}
+            {/* // <div className="landing"> {strings.landingtext} </div> */}
+            {/* } */}
+
+
+
 
           </Route>
         </Switch>

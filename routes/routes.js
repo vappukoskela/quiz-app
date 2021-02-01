@@ -66,7 +66,7 @@ router.post(
             const error = new Error('An error occurred.', err);
             return res.status(409).json({ error: "Unauthorised" })
           }
-          const userObj = { id: user.id, username: user.username, role_id: user.role_id }
+          const userObj = { id: user.id, username: user.username, role_id: user.role_id , firstname: user.firstname, surname: user.surname}
           const token = jwt.sign({ user: user }, 'TOP_SECRET');
           console.log(token)
           return res.json({ userObj, token })
