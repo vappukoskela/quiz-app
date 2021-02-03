@@ -154,7 +154,6 @@ app.get('/user/:id/answer/:id2', cors(), (req, res, next) => {
     }
     res.send(result.rows[0])
   })
-  })
 })
 
 // --------------------- POST -----------------------
