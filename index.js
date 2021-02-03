@@ -35,8 +35,11 @@ app.use(cors(
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   }
 ))
+
+//////-----------------------------------------------------------------------------------
 app.use('/', routes)
 app.use('/user', passport.authenticate('jwt', { session: false }), secureRoute);
+//////------------------------------------------------------------------------------------
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -59,17 +62,13 @@ app.get('/', function (req, res, next) {
 
 var pg_client = new pg.Client(con_string);
 pg_client.connect();
-
 var query = pg_client.query('LISTEN addedrecord');
 var query2 = pg_client.query('LISTEN addquiz');
 var query3 = pg_client.query('LISTEN alterquiz');
 var query4 = pg_client.query('LISTEN adduser');
-
 io.sockets.on('connection', function (socket) {
   socket.emit('connected', { connected: true });
-
   socket.on('ready for data', function (data) {
-    console.log('server ready')
     pg_client.on('notification', function (title) {
       socket.emit('update', { message: title });
     });
@@ -127,7 +126,7 @@ app.get('/quiz/:id', cors(), (req, res, next) => {
 
 
 // get all users
-app.get('/user/', cors(), (req, res, next) => {
+app.get('/allusers/', cors(), (req, res, next) => {
   db.query('SELECT * from users', (err, result) => {
     if (err) {
       return next(err)
@@ -137,12 +136,24 @@ app.get('/user/', cors(), (req, res, next) => {
 })
 
 // get user by id
-app.get('/user/:id', cors(), (req, res, next) => {
-  db.query('SELECT * from users WHERE id = $1', [req.params.id], (err, result) => {
+app.get('/user/', cors(), (req, res, next) => {
+  console.log(req)
+  db.query('SELECT * from users WHERE id = $1', [req.user.id], (err, result) => {
     if (err) {
       return next(err)
     }
     res.send(result.rows[0])
+  })
+})
+
+// get useranswer by answer_id and user_id
+app.get('/user/:id/answer/:id2', cors(), (req, res, next) => {
+  db.query('SELECT * from useranswers WHERE user_id = $1 AND answer_id = $2', [req.params.user_id, req.params.answer_id], (err,result) => {
+    if (err) {
+      return next(err)
+    }
+    res.send(result.rows[0])
+  })
   })
 })
 

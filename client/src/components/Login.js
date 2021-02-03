@@ -13,33 +13,10 @@ const Login = (props) => {
         email: '',
         password: ''
     })
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-
     const changeData = (e, field) => {
         setUserData({ ...userData, [field]: e.target.value })
     }
-
-    // const submitLogin = async (e) => {
-    //     console.log(userData)
-    //     let body = {
-    //         email: userData.email,
-    //         password: userData.password,
-    //     }
-    //     console.log(body)
-    //     e.preventDefault()
-    //     try {
-    //         await axios.post("http://localhost:5000/login/", body).then(response => {
-    //             console.log(response, "LOGIN RESPONSE")
-    //             localStorage.setItem('jwtToken', response.data.token)
-    //             setIsLoggedIn(true)
-    //         })
-    //     } catch (e) {
-    //         console.log("registration error", e)
-    //     }
-    // }
-
     const loggingIn = () => {
-        console.log(userData)
         // setIsLoggedIn(true)       
         props.submitLogin(userData)
     }

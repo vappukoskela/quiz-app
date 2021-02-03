@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { Container, Paper, Button } from '@material-ui/core';
+import { Container, Paper, Button, Drawer, ListItem } from '@material-ui/core';
 import axios from 'axios';
 import Register from './components/Register'
 import EditQuestion from './components/EditQuestion';
@@ -121,43 +121,72 @@ function App() {
   const [admin, setAdmin] = useState(false)
   const [lan, setLan] = useState('en')
   const { enqueueSnackbar } = useSnackbar();
+  const [token, setToken] = useState(localStorage.getItem('jwtToken'))
   const [user, setUser] = useState({
     firstname: "",
     surname: "",
+    email: "",
     id: null,
     role_id: null
   })
 
   /// LOGIN
 
-  
+  useEffect(() => {
+    console.log("TOKEN ", token)
+    if (token === null) {
+      setLoggedIn(false)
+    }
+    else
+      setLoggedIn(true)
+
+    if (loggedIn) {
+      console.log(loggedIn)
+      getUser() // get user profile to populate user object
+    }
+  }, [loggedIn, token])
+
+  const getUser = async () => {
+    try {
+      await axios.get(path + "user?secret_token=" + token).then(response => {
+        setUser(response.data)
+        console.log("gotUser" + response.data)
+        if (response.data.role_id == 2) {
+          setAdmin(true)
+        }
+        setLoggedIn(true)
+      })
+    } catch (e) {
+      console.log("error getting user", e)
+    }
+  }
   const submitRegistration = async (userData) => {
     console.log(userData)
     let body = {
-        email: userData.email,
-        password: userData.password,
-        firstname: userData.firstname,
-        surname: userData.surname,
-        role_id: userData.role_id
+      email: userData.email,
+      password: userData.password,
+      firstname: userData.firstname,
+      surname: userData.surname,
+      role_id: userData.role_id
     }
     console.log(body)
     try {
-        await axios.post("http://localhost:5000/register/", body).then(response => {
-          var snackMsg = strings.registersuccess
-          enqueueSnackbar(snackMsg, { variant: 'success' })
-          setUser(userData)
-          if (userData.role_id == 2) {
-            setAdmin(true)
-          }
-          setLoggedIn(true)
-        })
+      await axios.post(path + "register/", body).then(response => {
+        var snackMsg = strings.registersuccess
+        enqueueSnackbar(snackMsg, { variant: 'success' })
+        setUser(userData)
+        if (userData.role_id == 2) {
+          setAdmin(true)
+        }
+        setLoggedIn(true)
+      })
 
     } catch (e) {
       var snackMsg = strings.registerfail
       enqueueSnackbar(snackMsg, { variant: 'error' })
       console.log("registration error", e)
     }
-}
+  }
 
   const submitLogin = async (userData) => {
     console.log(userData)
@@ -167,14 +196,15 @@ function App() {
     }
     console.log(body)
     try {
-      await axios.post("http://localhost:5000/login/", body).then(response => {
+      await axios.post(path + "login/", body).then(response => {
         console.log(response, "LOGIN RESPONSE")
         localStorage.setItem('jwtToken', response.data.token)
-        setUser({ firstname: response.data.userObj.firstname, surname: response.data.userObj.surname, id: response.data.userObj.surname, role_id: response.data.userObj.role_id })
+        setUser({ firstname: response.data.userObj.firstname, surname: response.data.userObj.surname, id: response.data.userObj.surname, role_id: response.data.userObj.role_id, email: response.data.userObj.username })
         if (response.data.userObj.role_id == 2) {
           setAdmin(true)
         }
         setLoggedIn(true)
+        setToken(response.data.token)
         var snackMsg = strings.loginsuccess
         enqueueSnackbar(snackMsg, { variant: 'success' })
       })
@@ -190,10 +220,13 @@ function App() {
       firstname: "",
       surname: "",
       id: null,
-      role_id: null
+      role_id: null,
+      email: ""
     })
     setLoggedIn(false)
     setAdmin(false)
+    setToken(null)
+    localStorage.removeItem('jwtToken')
   }
 
   useEffect(() => {
@@ -227,7 +260,7 @@ function App() {
       }
       enqueueSnackbar(snackMsg)
     })
-    return 
+    return
   }, [])
 
   useEffect(() => {
@@ -244,6 +277,7 @@ function App() {
                 result.data[i].quizQuestions[j].answerOptions = [];
                 let answers = await axios.get(path + "quiz/" + result.data[i].id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
                 result.data[i].quizQuestions[j].answerOptions = answers.data;
+              
               }
             }
           }
@@ -452,16 +486,17 @@ function App() {
   return (
     <div>
       <Container className="quizContainer">
-        <ButtonAppBar switchLanguage={switchLanguage} isLoggedIn={loggedIn} logOut={logOut} language={lan} />
+        <ButtonAppBar switchLanguage={switchLanguage} user={user} isLoggedIn={loggedIn} logOut={logOut} language={lan} />
+
         <Switch>
-          <Route exact path="/register" component={() => <Register submitRegistration={submitRegistration} isRegistered={loggedIn}/>} />
+          <Route exact path="/register" component={() => <Register submitRegistration={submitRegistration} isRegistered={loggedIn} />} />
           {/* <Route exact path="/login" component={() => <Login submitLogin={submitLogin} isLoggedIn={loggedIn} />} /> */}
           <Route exact path="/">
             {loggedIn ?
               <div>
                 <div className="greetingContainer">
-                  <p className="greeting">{strings.greet}, {user.firstname} {user.surname}<br/>
-                  {strings.userinrole}: {user.role_id}</p></div>
+                  <p className="greeting">{strings.greet}, {user.firstname} {user.surname}<br />
+                    {strings.userinrole}: {user.role_id}</p></div>
                 <div className={classes.root}>
                   {/* <FormControlLabel
                 control={

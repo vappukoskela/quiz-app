@@ -16,14 +16,17 @@ router.get(
   }
 );
 
+
 passport.use(
   new JWTstrategy(
     {
       secretOrKey: 'TOP_SECRET',
-      jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+      // jwtFromRequest: ExtractJWT.fromAuthHeader() // "is not a function" wth
+      jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token') // this at least works
     },
     async (token, done) => {
       console.log("hello world")
+      console.log(token)
       try {
         return done(null, token.user);
       } catch (error) {

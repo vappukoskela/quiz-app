@@ -33,7 +33,8 @@ let strings = new LocalizedStrings(
             "registersuccess": "Registration successful! Welcome",
             "registerfail": "Registration failed",
             "greet": "Hello",
-            "userinrole": "User in role"
+            "userinrole": "User in role",
+            "language": "Language settings"
         },
         fi: {
             "login": "Kirjaudu",
@@ -66,7 +67,8 @@ let strings = new LocalizedStrings(
             "registersuccess": "Rekisteröityminen onnistui! Tervetuloa",
             "registerfail": "Rekisteröityminen epäonnistui",
             "greet": "Hei",
-            "userinrole": "Käyttäjä roolissa"
+            "userinrole": "Käyttäjä roolissa",
+            "language": "Kieliasetukset"
         }
     }
 )
