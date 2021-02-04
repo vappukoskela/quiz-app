@@ -34,7 +34,9 @@ let strings = new LocalizedStrings(
             "registerfail": "Registration failed",
             "greet": "Hello",
             "userinrole": "User in role",
-            "language": "Language settings"
+            "language": "Language settings",
+            "admin": "admin",
+            "student": "student"
         },
         fi: {
             "login": "Kirjaudu",
@@ -68,7 +70,9 @@ let strings = new LocalizedStrings(
             "registerfail": "Rekisteröityminen epäonnistui",
             "greet": "Hei",
             "userinrole": "Käyttäjä roolissa",
-            "language": "Kieliasetukset"
+            "language": "Kieliasetukset",
+            "admin": "admin",
+            "student": "oppilas"
         }
     }
 )

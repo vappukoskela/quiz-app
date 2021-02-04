@@ -22,6 +22,7 @@ import socketIOClient from 'socket.io-client'
 import NewQuizDialog from './components/NewQuizDialog';
 import EditQuizTitleComponent from './components/EditQuizTitleComponent';
 import QuizTitleComponent from './components/QuizTitleComponent';
+import { toLower } from 'lodash';
 var sIOEndpoint = ''
 // const sIOEndpoint = 'ws://localhost:9000'
 
@@ -127,7 +128,8 @@ function App() {
     surname: "",
     email: "",
     id: null,
-    role_id: null
+    role_id: null,
+    role: ""
   })
 
   /// LOGIN
@@ -161,9 +163,10 @@ function App() {
     }
   }
   const submitRegistration = async (userData) => {
+    var emailLower = toLower(userData.email)
     console.log(userData)
     let body = {
-      email: userData.email,
+      email:  emailLower,
       password: userData.password,
       firstname: userData.firstname,
       surname: userData.surname,
@@ -174,10 +177,10 @@ function App() {
       await axios.post(path + "register/", body).then(response => {
         var snackMsg = strings.registersuccess
         enqueueSnackbar(snackMsg, { variant: 'success' })
-        setUser(userData)
         if (userData.role_id == 2) {
           setAdmin(true)
         }
+        setUser(userData)
         setLoggedIn(true)
       })
 
@@ -190,8 +193,9 @@ function App() {
 
   const submitLogin = async (userData) => {
     console.log(userData)
+    var emailLower = toLower(userData.email)
     let body = {
-      email: userData.email,
+      email: emailLower,
       password: userData.password,
     }
     console.log(body)

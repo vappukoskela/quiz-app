@@ -82,10 +82,16 @@ function ButtonAppBar(props) {
             {props.isLoggedIn ?
               <div>
                 <ListItem className={classes.nameHeader}>
-                {props.user.firstname} {props.user.surname}
+                  {props.user.firstname} {props.user.surname}
                 </ListItem>
                 <ListItem>
-                  <i>{props.user.email}</i>
+                  <i>{props.user.username}</i>
+                </ListItem>
+                <ListItem>
+                  {props.user.role_id === "2" ?
+                    <i>{strings.admin} </i>
+                    : <i> {strings.student}</i>
+                  }
                 </ListItem>
               </div>
               : ""}
