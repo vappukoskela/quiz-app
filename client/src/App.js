@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
 
 var path = null;
 switch (process.env.NODE_ENV) {
-
   case 'production':
     path = 'https://vappus-quiz-app.herokuapp.com/'
     sIOEndpoint = 'https://vappus-quiz-app.herokuapp.com'
@@ -61,10 +60,7 @@ switch (process.env.NODE_ENV) {
 function reducer(state, action) {
   let deepCopy = JSON.parse(JSON.stringify(state))
   switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
     case "INIT_DATA":
-      console.log(action)
       return action.data; /// <--- this should be state
     case "ANSWER_CHANGED":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].answer = action.data.newText;
@@ -104,6 +100,9 @@ function reducer(state, action) {
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].correct =
         !deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].correct;
       return deepCopy;
+    case "USERANSWER_CHANGED":
+      deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].selected = action.data.selected;
+      return deepCopy;
     default:
       throw new Error();
   }
@@ -115,7 +114,7 @@ function App() {
 
   const classes = useStyles();
   const [dataAlustettu, setDataAlustettu] = useState(false);
-  const [quiz, setQuiz] = useState(0);
+  const [quiz, setQuiz] = useState(null);
   const [answersVisible, setAnswersVisible] = useState(false);
   const [state, dispatch] = useReducer(reducer, []);
   const [loggedIn, setLoggedIn] = useState(false)
@@ -128,11 +127,26 @@ function App() {
     surname: "",
     email: "",
     id: null,
-    role_id: null,
-    role: ""
+    role_id: null
   })
 
   /// LOGIN
+  const logOut = () => {
+    setUser({
+      firstname: "",
+      surname: "",
+      email: "",
+      id: null,
+      role_id: null
+    })
+    setLoggedIn(false)
+    setAdmin(false)
+    setToken(null)
+    setQuiz(null)
+    setAnswersVisible(false)
+    localStorage.removeItem('jwtToken')
+  }
+
 
   useEffect(() => {
     console.log("TOKEN ", token)
@@ -151,8 +165,16 @@ function App() {
   const getUser = async () => {
     try {
       await axios.get(path + "user?secret_token=" + token).then(response => {
-        setUser(response.data)
-        console.log("gotUser" + response.data)
+        setUser(
+          {
+            firstname: response.data.firstname,
+            surname: response.data.surname,
+            email: response.data.username,
+            id: response.data.id,
+            role_id: response.data.role_id
+          }
+        )
+        console.log(response.data)
         if (response.data.role_id == 2) {
           setAdmin(true)
         }
@@ -162,11 +184,12 @@ function App() {
       console.log("error getting user", e)
     }
   }
+
   const submitRegistration = async (userData) => {
     var emailLower = toLower(userData.email)
     console.log(userData)
     let body = {
-      email:  emailLower,
+      email: emailLower,
       password: userData.password,
       firstname: userData.firstname,
       surname: userData.surname,
@@ -203,7 +226,13 @@ function App() {
       await axios.post(path + "login/", body).then(response => {
         console.log(response, "LOGIN RESPONSE")
         localStorage.setItem('jwtToken', response.data.token)
-        setUser({ firstname: response.data.userObj.firstname, surname: response.data.userObj.surname, id: response.data.userObj.surname, role_id: response.data.userObj.role_id, email: response.data.userObj.username })
+        setUser({
+          firstname: response.data.userObj.firstname,
+          surname: response.data.userObj.surname,
+          email: response.data.userObj.username,
+          id: response.data.userObj.id,
+          role_id: response.data.userObj.role_id
+        })
         if (response.data.userObj.role_id == 2) {
           setAdmin(true)
         }
@@ -219,30 +248,14 @@ function App() {
     }
   }
 
-  const logOut = () => {
-    setUser({
-      firstname: "",
-      surname: "",
-      id: null,
-      role_id: null,
-      email: ""
-    })
-    setLoggedIn(false)
-    setAdmin(false)
-    setToken(null)
-    localStorage.removeItem('jwtToken')
-  }
-
   useEffect(() => {
     const socket = socketIOClient(sIOEndpoint)
     socket.on('connected', function (data) {
-      console.log("CONNECTED")
       socket.emit('ready for data', {})
       enqueueSnackbar('Socket connected!')
     });
     socket.on('update', function (data) {
       var snackMsg = ""
-      console.log("UPDATED", data.message.payload)
       switch (data.message.channel) {
         case "addquiz":
           snackMsg = "New Quiz: " + data.message.payload
@@ -256,15 +269,11 @@ function App() {
           console.log(thisPayload)
           snackMsg = "Quiz: " + thisPayload.old + " was renamed to " + thisPayload.new
           break;
-        case "addedrecord":
-          snackMsg = "this is a test!"
-          break;
         default:
           break;
       }
       enqueueSnackbar(snackMsg)
     })
-    return
   }, [])
 
   useEffect(() => {
@@ -279,9 +288,8 @@ function App() {
             if (result.data[i].quizQuestions.length > 0) {
               for (var j = 0; j < result.data[i].quizQuestions.length; j++) {
                 result.data[i].quizQuestions[j].answerOptions = [];
-                let answers = await axios.get(path + "quiz/" + result.data[i].id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
+                let answers = await axios.get(path + "useranswer/" + user.id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
                 result.data[i].quizQuestions[j].answerOptions = answers.data;
-              
               }
             }
           }
@@ -294,11 +302,13 @@ function App() {
         }
       }
       catch (exception) {
-        console.log(exception)
+        console.log("fetchData exception", exception)
       }
     }
+
     fetchData();
-  }, [])
+
+  }, [user])
 
   const getWindowLanguage = () => {
     var language
@@ -391,6 +401,7 @@ function App() {
     let quizId = state[quizIndex].id;
     let questionId = state[quizIndex].quizQuestions[questionIndex].id;
     let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
+    console.log(state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex])
     let body = {}
     switch (editMode) {
       case "TEXT":
@@ -423,6 +434,25 @@ function App() {
     }
   }
 
+  const updateUseranswer = async (event, quizIndex, questionIndex, answerIndex) => {
+    let quizId = state[quizIndex].id;
+    let questionId = state[quizIndex].quizQuestions[questionIndex].id;
+    let answerId = state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].id;
+    let body = {};
+
+    if (state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].selected === null) {
+      body.selected = true
+      let result = await axios.post(path + "useranswers/" + user.id + "/answer/" + answerId, body)
+    } else {
+      // invert
+      body.selected = !state[quizIndex].quizQuestions[questionIndex].answerOptions[answerIndex].selected;
+      let result = await axios.put(path + "useranswers/" + user.id + "/answer/" + answerId, body)
+    }
+    dispatch({ type: "USERANSWER_CHANGED", data: { selected: body.selected, quizIndex: quizIndex, questionIndex: questionIndex, answerIndex: answerIndex } })
+    console.log('update user answer', body.selected)
+
+  }
+
   //// DELETE ------------------------------------------------------------------------------------------------
 
   const deleteQuestion = async (event, quizIndex, questionIndex) => {
@@ -439,7 +469,7 @@ function App() {
   const deleteQuiz = async (event, quizIndex) => {
     let quizId = state[quizIndex].id;
     try {
-      setQuiz(0)
+      setQuiz(null)
       let result = await axios.delete(path + "quiz/" + quizId)
       dispatch({ type: "DELETE_QUIZ", data: { newText: '', quizIndex: quizIndex } })
     } catch (e) {
@@ -468,24 +498,6 @@ function App() {
     setAnswersVisible(!answersVisible);
   }
 
-  const [status, setStatus] = React.useState({
-    teacherMode: false,
-  });
-
-  const handleChange = (event) => {
-    setStatus({ ...status, [event.target.name]: event.target.checked });
-  };
-
-  // const [topicList, setTopicList] = useState([])
-  // const buildTopicList = (topic) => {
-  //   if (!topicList.includes(topic)) {
-  //     var newTopicList = [...topicList].concat(topic)
-  //     setTopicList(newTopicList)
-  //   }
-  // }
-
-
-
   //// JSX ------------------------------------------------------------------------------------------------------
   return (
     <div>
@@ -494,31 +506,16 @@ function App() {
 
         <Switch>
           <Route exact path="/register" component={() => <Register submitRegistration={submitRegistration} isRegistered={loggedIn} />} />
-          {/* <Route exact path="/login" component={() => <Login submitLogin={submitLogin} isLoggedIn={loggedIn} />} /> */}
           <Route exact path="/">
             {loggedIn ?
               <div>
-                <div className="greetingContainer">
-                  <p className="greeting">{strings.greet}, {user.firstname} {user.surname}<br />
-                    {strings.userinrole}: {user.role_id}</p></div>
                 <div className={classes.root}>
-                  {/* <FormControlLabel
-                control={
-                  <MaterialSwitch
-                    checked={status.teacherMode}
-                    onChange={handleChange}
-                    name="teacherMode"
-                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                  />
-                }
-                label={strings.teachermode} /><br /> */}
-
-                  {dataAlustettu ? state.map((val, index) => {
-                    return <Button variant="outlined" onClick={() => selectQuiz(index)}>{val.quizname}</Button>
+                  {dataAlustettu && state.length > 0 ? state.map((val, index) => {
+                    return <Button variant="outlined" onClick={() => setQuiz(index)}>{val.quizname}</Button>
                   }) : null}
-                  {admin && dataAlustettu ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
+                  {admin ? <div><NewQuizDialog addNewQuiz={addQuiz} /></div> : ""}
                 </div>
-                {dataAlustettu ?
+                {quiz != null ?
                   <div className="questionCard">
                     <Paper elevation={1} padding="10%">
                       {admin
@@ -527,7 +524,7 @@ function App() {
                     </Paper>
                   </div>
                   : ""}
-                {dataAlustettu ? state[quiz].quizQuestions.map((value, parentIndex) => {
+                {quiz != null ? state[quiz].quizQuestions.map((value, parentIndex) => {
                   return (
                     <div className="questionCard">
                       <Paper elevation={1}>
@@ -541,12 +538,13 @@ function App() {
                             return (
                               <div>
                                 {admin ?
-                                  <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} status={status}
+                                  <EditAnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index}
                                     updateAnsweroption={updateAnsweroption}
+                                    updateUseranswer={updateUseranswer}
                                     deleteAnsweroption={deleteAnsweroption}
                                     dispatch={dispatch}
                                   />
-                                  : <AnswerOption value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
+                                  : <AnswerOption updateUseranswer={updateUseranswer} value={value} quiz={quiz} parentIndex={parentIndex} index={index} answersVisible={answersVisible} />}
                               </div>
                             )
                           })}
@@ -558,17 +556,11 @@ function App() {
                 })
                   : null}
                 <div className="bottomButtons">
-                  {admin ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewquestion}</Button> :
-                    <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button>
-                  }</div>
+                  {admin && state.length > 0 ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewquestion}</Button> : null}
+                  {!admin && quiz != null ? <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button> : null}
+                </div>
               </div> :
               <Login submitLogin={submitLogin} isLoggedIn={loggedIn} />}
-            {/* // <div className="landing"> {strings.landingtext} </div> */}
-            {/* } */}
-
-
-
-
           </Route>
         </Switch>
       </Container >

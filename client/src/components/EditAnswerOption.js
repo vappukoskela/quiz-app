@@ -28,8 +28,8 @@ function EditAnswerOption(props) {
             <ListItemIcon>
                 <Checkbox
                     // TODO:
-                    // onChange={(event) => console.log(event, "click")}
-                     onChange={(event) => props.dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: props.quiz, questionIndex: props.parentIndex, answerIndex: props.index } })}
+                    onChange={(event) => props.updateUseranswer(event, props.quiz, props.parentIndex, props.index)}
+                    //  onChange={(event) => props.dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: props.quiz, questionIndex: props.parentIndex, answerIndex: props.index } })}
                     checked={props.value.selected}
                     edge="start"
                     tabIndex={-1}

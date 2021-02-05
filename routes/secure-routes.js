@@ -25,8 +25,6 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token') // this at least works
     },
     async (token, done) => {
-      console.log("hello world")
-      console.log(token)
       try {
         return done(null, token.user);
       } catch (error) {

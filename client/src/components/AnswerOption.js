@@ -27,7 +27,7 @@ function AnswerOption(props) {
             <ListItemIcon>
                 <Checkbox
                     // TODO:
-                    // onChange={(event) => dispatch({ type: "SELECT_TOGGLE", data: { newText: event.target.value, quizIndex: quiz, questionIndex: parentIndex, answerIndex: index } })}
+                    onChange={(event) => props.updateUseranswer(event, props.quiz, props.parentIndex, props.index)}
                     checked={props.value.selected}
                     edge="start"
                     tabIndex={-1}

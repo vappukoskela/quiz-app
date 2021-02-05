@@ -36,7 +36,8 @@ let strings = new LocalizedStrings(
             "userinrole": "User in role",
             "language": "Language settings",
             "admin": "admin",
-            "student": "student"
+            "student": "student",
+            "quizname": "Quiz title"
         },
         fi: {
             "login": "Kirjaudu",
@@ -72,7 +73,8 @@ let strings = new LocalizedStrings(
             "userinrole": "Käyttäjä roolissa",
             "language": "Kieliasetukset",
             "admin": "admin",
-            "student": "oppilas"
+            "student": "oppilas",
+            "quizname": "Tentin otsikko"
         }
     }
 )

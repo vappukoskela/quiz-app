@@ -76,12 +76,12 @@ function ButtonAppBar(props) {
       <React.Fragment key="menudrawer">
         <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
           <List className={classes.list}>
-            <ListItem>
+            <ListItem key="appname">
               <Typography className={classes.heading}><b>Quiz App</b></Typography>
             </ListItem>
             {props.isLoggedIn ?
               <div>
-                <ListItem className={classes.nameHeader}>
+                <ListItem key="" className={classes.nameHeader}>
                   {props.user.firstname} {props.user.surname}
                 </ListItem>
                 <ListItem>

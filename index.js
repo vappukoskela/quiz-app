@@ -114,6 +114,18 @@ app.get('/quiz/:id/question/:question_id/answer', (req, res, next) => {
   })
 });
 
+// get useranswers by question_id and user_id
+app.get('/useranswer/:user_id/question/:question_id/answer', (req, res, next) => {
+  db.query('select answeroptions.id, answeroptions.answer, answeroptions.correct, answeroptions.question_id, useranswers.user_id, useranswers.selected from answeroptions left JOIN (select * from useranswers where useranswers.user_id=$1) as useranswers on answeroptions.id = useranswers.answer_id where answeroptions.question_id = $2;', [req.params.user_id, req.params.question_id], (err, result) => {
+    // db.query('SELECT * from useranswers WHERE user_id = $1 AND answer_id = $2', [req.params.user_id, req.params.answer_id], (err,result) => {
+    if (err) {
+      return next(err)
+    }
+    res.send(result.rows)
+  })
+})
+
+
 // get quiz by ID
 app.get('/quiz/:id', cors(), (req, res, next) => {
   db.query('SELECT * FROM quizzes WHERE id = $1', [req.params.id], (err, result) => {
@@ -137,7 +149,6 @@ app.get('/allusers/', cors(), (req, res, next) => {
 
 // get user by id
 app.get('/user/', cors(), (req, res, next) => {
-  console.log(req)
   db.query('SELECT * from users WHERE id = $1', [req.user.id], (err, result) => {
     if (err) {
       return next(err)
@@ -146,15 +157,6 @@ app.get('/user/', cors(), (req, res, next) => {
   })
 })
 
-// get useranswer by answer_id and user_id
-app.get('/user/:id/answer/:id2', cors(), (req, res, next) => {
-  db.query('SELECT * from useranswers WHERE user_id = $1 AND answer_id = $2', [req.params.user_id, req.params.answer_id], (err,result) => {
-    if (err) {
-      return next(err)
-    }
-    res.send(result.rows[0])
-  })
-})
 
 // --------------------- POST -----------------------
 
@@ -181,6 +183,16 @@ app.post('/quiz/:id', cors(), (req, res, next) => {
 // add an answeroption to question
 app.post('/quiz/:id/question/:id2', cors(), (req, res, next) => {
   db.query('INSERT INTO answeroptions (quiz_id, answer, correct, question_id) values ($1, $2, $3, $4) RETURNING id', [req.params.id, req.body.answer, req.body.correct, req.params.id2], (err, result) => {
+    if (err) {
+      return next(err)
+    }
+    res.send(result.rows[0])
+  })
+})
+
+// add a useranswer (selection) to answer
+app.post('/useranswers/:user_id/answer/:answer_id', cors(), (req, res, next) => {
+  db.query('INSERT INTO useranswers (answer_id, user_id, selected) values ($1, $2, $3) RETURNING id', [ req.params.answer_id,req.params.user_id, req.body.selected], (err, result) => {
     if (err) {
       return next(err)
     }
@@ -257,6 +269,17 @@ app.put('/quiz/:id/question/:id2/answer/:id3', cors(), (req, res, next) => {
     res.send(req.body)
   })
 })
+
+// add a useranswer (selection) to answer
+app.put('/useranswers/:user_id/answer/:answer_id', cors(), (req, res, next) => {
+  db.query('UPDATE useranswers set selected=$3 where user_id=$1 AND answer_id=$2', [req.params.user_id, req.params.answer_id, req.body.selected], (err, result) => {
+    if (err) {
+      return next(err)
+    }
+    res.send(req.body)
+  })
+})
+
 
 // ------- DELETE ---------------------------------
 
