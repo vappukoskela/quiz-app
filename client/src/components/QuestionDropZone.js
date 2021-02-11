@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import superagent from 'superagent'

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddIcon from '@material-ui/icons/Add';
-import { Container, Paper, Button, Drawer, ListItem } from '@material-ui/core';
+import { Container, Paper, Button } from '@material-ui/core';
 import axios from 'axios';
 import Register from './components/Register'
 import EditQuestion from './components/EditQuestion';
@@ -22,9 +22,9 @@ import socketIOClient from 'socket.io-client'
 import NewQuizDialog from './components/NewQuizDialog';
 import EditQuizTitleComponent from './components/EditQuizTitleComponent';
 import QuizTitleComponent from './components/QuizTitleComponent';
-import { toLower } from 'lodash';
+import CorrectAnswersCard from './components/CorrectAnswersCard';
+import { map, toLower } from 'lodash';
 var sIOEndpoint = ''
-// const sIOEndpoint = 'ws://localhost:9000'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,6 +103,11 @@ function reducer(state, action) {
     case "USERANSWER_CHANGED":
       deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].answerOptions[action.data.answerIndex].selected = action.data.selected;
       return deepCopy;
+    case "UPDATE_POINTS":
+      deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].points = action.data.points;
+      deepCopy[action.data.quizIndex].quizQuestions[action.data.questionIndex].correctOptions = action.data.correctOptions;
+      console.log(deepCopy)
+      return deepCopy;
     default:
       throw new Error();
   }
@@ -153,12 +158,11 @@ function App() {
     if (token === null) {
       setLoggedIn(false)
     }
-    else
+    else {
       setLoggedIn(true)
-
-    if (loggedIn) {
-      console.log(loggedIn)
+      // if (loggedIn) {
       getUser() // get user profile to populate user object
+      // }
     }
   }, [loggedIn, token])
 
@@ -174,7 +178,6 @@ function App() {
             role_id: response.data.role_id
           }
         )
-        console.log(response.data)
         if (response.data.role_id == 2) {
           setAdmin(true)
         }
@@ -215,7 +218,6 @@ function App() {
   }
 
   const submitLogin = async (userData) => {
-    console.log(userData)
     var emailLower = toLower(userData.email)
     let body = {
       email: emailLower,
@@ -265,8 +267,6 @@ function App() {
           break;
         case "alterquiz":
           let thisPayload = JSON.parse(data.message.payload)
-          console.log("hi from here")
-          console.log(thisPayload)
           snackMsg = "Quiz: " + thisPayload.old + " was renamed to " + thisPayload.new
           break;
         default:
@@ -290,10 +290,11 @@ function App() {
                 result.data[i].quizQuestions[j].answerOptions = [];
                 let answers = await axios.get(path + "useranswer/" + user.id + "/question/" + result.data[i].quizQuestions[j].id + "/answer")
                 result.data[i].quizQuestions[j].answerOptions = answers.data;
+                result.data[i].quizQuestions[j].points = 0;
+                result.data[i].quizQuestions[j].correctOptions = 0;
               }
             }
           }
-          console.log(result.data)
           dispatch({ type: "INIT_DATA", data: result.data })
           setDataAlustettu(true)
         } else {
@@ -325,9 +326,6 @@ function App() {
     setLan(newLan)
     strings.setLanguage(newLan)
   }
-
-
-  // TODO: updateUseranswer
 
   //// POST ---------------------------------------------------------------------------------------------------
   const addQuestion = async (event, quizIndex) => {
@@ -496,6 +494,29 @@ function App() {
 
   const toggleAnswers = () => {
     setAnswersVisible(!answersVisible);
+    console.log(state)
+    tallyAnswersForQuestions(quiz)
+  }
+
+  const tallyAnswersForQuestions = (quizIndex) => {
+    var talliedQuiz = state[quizIndex]
+    var questionPoints, correctOptions;
+
+    for (var i = 0; i < talliedQuiz.quizQuestions.length; i++) {
+      for (var j = 0; j < talliedQuiz.quizQuestions[i].answerOptions.length; j++) {
+        if (j === 0) {
+          questionPoints = 0;
+          correctOptions = 0
+        } // reset
+        if (talliedQuiz.quizQuestions[i].answerOptions[j].correct) {
+          correctOptions++;
+          if (talliedQuiz.quizQuestions[i].answerOptions[j].selected) {
+            questionPoints++;
+          } // else {} option for minus points for wrong questions
+        }
+      }
+      dispatch({ type: "UPDATE_POINTS", data: { points: questionPoints, correctOptions: correctOptions, quizIndex: quizIndex, questionIndex: i } })
+    }
   }
 
   //// JSX ------------------------------------------------------------------------------------------------------
@@ -548,6 +569,7 @@ function App() {
                               </div>
                             )
                           })}
+                          {answersVisible ? <div>{state[quiz].quizQuestions[parentIndex].points}/{state[quiz].quizQuestions[parentIndex].correctOptions} {strings.correct}</div> : null}
                           {admin ? <div className="addButton"><Button onClick={(event) => addAnsweroption(event, quiz, parentIndex)}><AddCircleIcon /></Button></div> : ""}
                         </List>
                       </Paper>
@@ -556,7 +578,7 @@ function App() {
                 })
                   : null}
                 <div className="bottomButtons">
-                  {admin && state.length > 0 ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewquestion}</Button> : null}
+                  {admin && quiz != null ? <Button variant="contained" onClick={(event) => addQuestion(event, quiz)}><AddIcon />   {strings.addnewquestion}</Button> : null}
                   {!admin && quiz != null ? <Button variant="contained" onClick={() => toggleAnswers()}>{answersVisible ? strings.hidecorrect : strings.showcorrect}</Button> : null}
                 </div>
               </div> :

@@ -5,6 +5,8 @@ const router = express.Router();
 var jwt = require('jsonwebtoken');
 const db = require('../db')
 var bcrypt = require('bcrypt')
+var passport = require('passport');
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const SALT_ROUNDS = 12
 let pwHashed;
 
@@ -63,7 +65,7 @@ router.post(
             const error = new Error('An error occurred.', err);
             return res.status(409).json({ error: "Unauthorised" })
           }
-          const userObj = { id: user.id, username: user.username, role_id: user.role_id , firstname: user.firstname, surname: user.surname}
+          const userObj = { id: user.id, username: user.username, role_id: user.role_id, firstname: user.firstname, surname: user.surname }
           const token = jwt.sign({ user: user }, 'TOP_SECRET');
           return res.json({ userObj, token })
         } catch (error) {
@@ -96,7 +98,7 @@ passport.use(
               return done(null, user, { message: 'Logged in Successfully' });
             })
           }
-         })
+        })
       } catch (error) {
         return done(error);
       }
@@ -104,6 +106,15 @@ passport.use(
   )
 );
 
+// //http://www.passportjs.org/docs/google/
+// passport.use(new GoogleStrategy({
+//   clientID: "731068452318-0i0f2c592jkheb3hr8qaibhss886lh2v.apps.googleusercontent.com",
+//   clientSecret: "gDTmrzU9OOlq7-ZPpLfxMXAK",
+//   callback: '"/auth/google/redirect'
+// }, accessToken => {
+//   console.log("access token: ", accessToken);
+// }
+// ));
 
 
 module.exports = router;

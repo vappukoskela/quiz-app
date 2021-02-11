@@ -62,7 +62,6 @@ app.get('/', function (req, res, next) {
 
 var pg_client = new pg.Client(con_string);
 pg_client.connect();
-var query = pg_client.query('LISTEN addedrecord');
 var query2 = pg_client.query('LISTEN addquiz');
 var query3 = pg_client.query('LISTEN alterquiz');
 var query4 = pg_client.query('LISTEN adduser');
@@ -75,6 +74,19 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
+// app.get("/auth/google", passport.authenticate("google", {
+//   scope: ["profile", "email"]
+// }));
+// app.get("/auth/google/redirect",passport.authenticate('google'));
+
+// app.get('/auth/google',
+//   passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }));
+// app.get('/auth/google/callback',
+//   passport.authenticate('google', { failureRedirect: '/login' }),
+//   function (req, res) {
+//     res.redirect('/');
+//   }
+// );
 
 
 // middleware jutut
@@ -192,7 +204,7 @@ app.post('/quiz/:id/question/:id2', cors(), (req, res, next) => {
 
 // add a useranswer (selection) to answer
 app.post('/useranswers/:user_id/answer/:answer_id', cors(), (req, res, next) => {
-  db.query('INSERT INTO useranswers (answer_id, user_id, selected) values ($1, $2, $3) RETURNING id', [ req.params.answer_id,req.params.user_id, req.body.selected], (err, result) => {
+  db.query('INSERT INTO useranswers (answer_id, user_id, selected) values ($1, $2, $3) RETURNING id', [req.params.answer_id, req.params.user_id, req.body.selected], (err, result) => {
     if (err) {
       return next(err)
     }

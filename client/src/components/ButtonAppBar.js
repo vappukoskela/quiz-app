@@ -85,7 +85,7 @@ function ButtonAppBar(props) {
                   {props.user.firstname} {props.user.surname}
                 </ListItem>
                 <ListItem>
-                  <i>{props.user.username}</i>
+                  <i>{props.user.email}</i>
                 </ListItem>
                 <ListItem>
                   {props.user.role_id === "2" ?

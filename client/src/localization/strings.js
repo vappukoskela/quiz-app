@@ -37,7 +37,8 @@ let strings = new LocalizedStrings(
             "language": "Language settings",
             "admin": "admin",
             "student": "student",
-            "quizname": "Quiz title"
+            "quizname": "Quiz title",
+            "correct": "Correct"
         },
         fi: {
             "login": "Kirjaudu",
@@ -74,7 +75,8 @@ let strings = new LocalizedStrings(
             "language": "Kieliasetukset",
             "admin": "admin",
             "student": "oppilas",
-            "quizname": "Tentin otsikko"
+            "quizname": "Tentin otsikko",
+            "correct": "Oikein"
         }
     }
 )

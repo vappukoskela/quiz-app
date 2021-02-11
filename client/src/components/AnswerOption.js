@@ -26,7 +26,6 @@ function AnswerOption(props) {
             </ListItemIcon>
             <ListItemIcon>
                 <Checkbox
-                    // TODO:
                     onChange={(event) => props.updateUseranswer(event, props.quiz, props.parentIndex, props.index)}
                     checked={props.value.selected}
                     edge="start"

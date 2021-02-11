@@ -14,15 +14,15 @@
             "type": "pwa-node"
         },
 
-        // {
-        //     "name": "Launch Program",
-        //     "program": "${workspaceFolder}\\server\\index.js",
-        //     "request": "launch",
-        //     "skipFiles": [
-        //         "<node_internals>/**"
-        //     ],
-        //     "type": "pwa-node"
-        // },
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}\\index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
         {
             "type": "chrome",
             "request": "launch",

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Button, Checkbox, TextField } from '@material-ui/core';
-import axios from 'axios';
 import strings from '../localization/strings';
 import { Redirect } from 'react-router-dom';
 
@@ -15,9 +14,6 @@ const Register = (props) => {
         role_id: 2
     })
     const [isAdmin, setIsAdmin] = useState(true)
-    const [isRegistered, setIsRegistered] = useState(false)
-
-    const [errorMsg, setErrorMsg] = useState("")
 
     const changeData = (e, field) => {
         setUserData({ ...userData, [field]: e.target.value })
@@ -36,29 +32,6 @@ const Register = (props) => {
         console.log(userData)
         props.submitRegistration(userData)
     }
-    // const submitRegistration = async (e) => {
-    //     console.log(userData)
-    //     let body = {
-    //         email: userData.email,
-    //         password: userData.password,
-    //         firstname: userData.firstname,
-    //         surname: userData.surname,
-    //         role_id: userData.role_id
-    //     }
-    //     console.log(body)
-    //     e.preventDefault()
-    //     try {
-    //         await axios.post("http://localhost:5000/register/", body).then(response => {
-    //             setErrorMsg("");
-    //             setIsRegistered(true)
-    //         })
-
-    //     } catch (e) {
-    //         setErrorMsg(strings.regerror)
-    //         console.log("registration error", e)
-    //     }
-    // }
-
     return (
         <div className="container">
             {props.isRegistered ? <Redirect to="/" /> :
@@ -82,7 +55,6 @@ const Register = (props) => {
                     <ListItem>
                         <Button variant="outlined" onClick={registering}>{strings.register}</Button>
                     </ListItem>
-                    <ListItem className="errorMessage">{errorMsg}</ListItem>
                 </List>
             }
         </div >

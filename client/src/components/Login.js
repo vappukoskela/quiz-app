@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Button, TextField } from '@material-ui/core';
-import {
-    Link, Redirect
-} from "react-router-dom";
-import axios from 'axios'
+import {Link} from "react-router-dom";
 import strings from '../localization/strings';
 
 const Login = (props) => {
@@ -38,6 +35,9 @@ const Login = (props) => {
                 <ListItem>
                     <Button variant="outlined" onClick={loggingIn}>{strings.login}</Button>
                 </ListItem>
+                {/* <ListItem>
+                    <a href="/auth/google">Sign In with Google</a>
+                </ListItem> */}
                 <ListItem>
                     <Link to="/register"><i>{strings.reglink}</i></Link>
                 </ListItem>
