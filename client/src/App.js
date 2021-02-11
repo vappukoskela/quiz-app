@@ -495,8 +495,11 @@ function App() {
   const toggleAnswers = () => {
     setAnswersVisible(!answersVisible);
     console.log(state)
-    tallyAnswersForQuestions(quiz)
+    for (var i = 0; i < state.length; i++){
+      tallyAnswersForQuestions(i)
+    }
   }
+
 
   const tallyAnswersForQuestions = (quizIndex) => {
     var talliedQuiz = state[quizIndex]
