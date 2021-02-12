@@ -3,6 +3,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import strings from '../localization/strings';
+import { useState } from "react";
 
 function EditAnswerOption(props) {
     const GreenCheckbox = withStyles({
@@ -14,6 +15,8 @@ function EditAnswerOption(props) {
         },
         checked: {},
       })((props) => <Checkbox color="default" {...props} />);
+
+    const [answerText, setAnswerText] = useState(props.value.answer)
 
     return (
         <ListItem key={"editansweropt" + props.value.id} role={undefined} dense >
@@ -36,11 +39,11 @@ function EditAnswerOption(props) {
                 />
             </ListItemIcon>
                 <div>
-                    <TextField onChange={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "TEXT")} size="small" label={(strings.answer) + " " + (props.index + 1)} variant="outlined" value={props.value.answer} />
+                    <TextField onChange={(e) => setAnswerText(e.target.value)} onBlur={(event) => props.updateAnsweroption(event, props.quiz, props.parentIndex, props.index, "TEXT")} size="small" label={(strings.answer) + " " + (props.index + 1)} variant="outlined" value={answerText} />
                     <Button className="deleteButton" onClick={(event) => props.deleteAnsweroption(event, props.quiz, props.parentIndex, props.index)}><DeleteIcon /></Button>
                 </div>
         </ListItem>
     )
 }
-
+//props.value.answer
 export default EditAnswerOption;

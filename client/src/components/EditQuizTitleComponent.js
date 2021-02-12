@@ -23,11 +23,12 @@ function EditQuizTitleComponent(props) {
         handleClose();
         props.deleteQuiz(event, props.quizindex);
     }
+    const [titleText, setTitleText] = useState(props.quizname)
 
     return (
         <ListItem key={"editquiztitlecomp" + props.quizid} role={undefined} dense >
             <div>
-                <TextField onChange={(event) => props.updateQuiz(event, props.quizindex)} label={strings.quizname} size="small" variant="outlined" value={props.quizname} />
+                <TextField onChange={(e) => setTitleText(e.target.value)} onBlur={(event) => props.updateQuiz(event, props.quizindex)} label={strings.quizname} size="small" variant="outlined" value={titleText} />
                 <Button className="deleteButton" onClick={handleClickOpen}><DeleteIcon /></Button>
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">{strings.deleting} {props.quizname}</DialogTitle>
